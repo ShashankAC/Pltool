@@ -1,0 +1,7 @@
+export const STORYTYPES = {
+    BUG: 'BUG',
+    FEATURE: 'FEATURE',
+    IMPROVEMENT: 'IMPROVEMENT',
+    MAINTENANCE: 'MAINTENANCE'
+};
+

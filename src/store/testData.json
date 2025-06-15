@@ -1,0 +1,370 @@
+{
+    "teamName": "public charging",
+    "piNumber": "25C",
+    "teamSize": "11",
+    "holidays": [
+        "2025-07-24T00:00:00.000Z",
+        "2025-07-25T00:00:00.000Z",
+        "2025-08-15T00:00:00.000Z"
+    ],
+    "teamMembers": [
+        {
+            "id": "1",
+            "name": "Shashank",
+            "specialities": [
+                "Frontend"
+            ],
+            "plannedLeaves": [
+                "2025-07-01T00:00:00.000Z",
+                "2025-07-02T00:00:00.000Z"
+            ]
+        },
+        {
+            "id": "2",
+            "name": "Ali",
+            "specialities": [
+                "Frontend"
+            ],
+            "plannedLeaves": [
+                "2025-07-03T00:00:00.000Z",
+                "2025-07-04T00:00:00.000Z"
+            ]
+        },
+        {
+            "id": "3",
+            "name": "Nitesh",
+            "specialities": [
+                "Backend"
+            ],
+            "plannedLeaves": [
+                "2025-07-07T00:00:00.000Z",
+                "2025-07-08T00:00:00.000Z"
+            ]
+        },
+        {
+            "id": "4",
+            "name": "Lav Singh",
+            "specialities": [
+                "Backend"
+            ],
+            "plannedLeaves": [
+                "2025-07-09T00:00:00.000Z",
+                "2025-07-10T00:00:00.000Z"
+            ]
+        },
+        {
+            "id": "5",
+            "name": "Shyam",
+            "specialities": [
+                "Backend"
+            ],
+            "plannedLeaves": [
+                "2025-07-14T00:00:00.000Z",
+                "2025-07-15T00:00:00.000Z"
+            ]
+        },
+        {
+            "id": "6",
+            "name": "Nihar",
+            "specialities": [
+                "Frontend"
+            ],
+            "plannedLeaves": [
+                "2025-07-16T00:00:00.000Z",
+                "2025-07-17T00:00:00.000Z"
+            ]
+        },
+        {
+            "id": "7",
+            "name": "Vijay",
+            "specialities": [
+                "Backend"
+            ],
+            "plannedLeaves": [
+                "2025-07-18T00:00:00.000Z",
+                "2025-07-21T00:00:00.000Z"
+            ]
+        },
+        {
+            "id": "8",
+            "name": "Venkat",
+            "specialities": [
+                "Architect"
+            ],
+            "plannedLeaves": [
+                "2025-07-22T00:00:00.000Z",
+                "2025-07-23T00:00:00.000Z"
+            ]
+        },
+        {
+            "id": "9",
+            "name": "Anu",
+            "specialities": [
+                "QA"
+            ],
+            "plannedLeaves": [
+            ]
+        },
+        {
+            "id": "10",
+            "name": "Priyanka",
+            "specialities": [
+                "UX"
+            ],
+            "plannedLeaves": [
+                "2025-07-28T00:00:00.000Z",
+                "2025-07-29T00:00:00.000Z"
+            ]
+        },
+        {
+            "id": "11",
+            "name": "Prajna",
+            "specialities": [
+                "BA"
+            ],
+            "plannedLeaves": [
+                "2025-07-30T00:00:00.000Z",
+                "2025-07-31T00:00:00.000Z"
+            ]
+        }
+    ],
+    "sprints": [
+        {
+            "name": "25C1",
+            "start": "2025-07-01T00:00:00.000Z",
+            "end": "2025-07-15T00:00:00.000Z"
+        },
+        {
+            "name": "25C2",
+            "start": "2025-07-16T00:00:00.000Z",
+            "end": "2025-07-31T00:00:00.000Z"
+        },
+        {
+            "name": "25C3",
+            "start": "2025-08-01T00:00:00.000Z",
+            "end": "2025-08-15T00:00:00.000Z"
+        },
+        {
+            "name": "25C4",
+            "start": "2025-08-16T00:00:00.000Z",
+            "end": "2025-08-29T00:00:00.000Z"
+        }
+    ],
+    "specialities": [
+        "Frontend", "Backend", "QA", "UX", "BA", "Architect"
+    ],
+    "stories": [
+        {
+            "storyId": "CUCO-1",
+            "title": "Frontend story 1 for shashank",
+            "description": "Test description",
+            "priority": "1",
+            "type": "BUG",
+            "specialities": [
+                "Frontend"
+            ],
+            "sprints": [
+                "25C1"
+            ],
+            "estimatedDuration": {
+                "days": "50",
+                "hours": "0"
+            },
+            "Assignee": "1",
+            "dependencies": []
+        },
+        {
+            "storyId": "CUCO-2",
+            "title": "Frontend story 1 for Ali",
+            "description": "Test description",
+            "priority": "1",
+            "type": "FEATURE",
+            "specialities": [
+                "Frontend"
+            ],
+            "sprints": [
+                "25C1"
+            ],
+            "estimatedDuration": {
+                "days": "50",
+                "hours": "0"
+            },
+            "Assignee": "2",
+            "dependencies": []
+        },
+        {
+            "storyId": "CUCO-3",
+            "title": "Frontend story 1 for Nihar",
+            "description": "Test description",
+            "priority": "1",
+            "type": "IMPROVEMENT",
+            "specialities": [
+                "Frontend"
+            ],
+            "sprints": [
+                "25C1"
+            ],
+            "estimatedDuration": {
+                "days": "50",
+                "hours": "0"
+            },
+            "Assignee": "3",
+            "dependencies": []
+        },
+        {
+            "storyId": "CUCO-4",
+            "title": "Backend story 1 for Nitesh",
+            "description": "Test description",
+            "priority": "1",
+            "type": "MAINTENANCE",
+            "specialities": [
+                "Frontend"
+            ],
+            "sprints": [
+                "25C1"
+            ],
+            "estimatedDuration": {
+                "days": "50",
+                "hours": "0"
+            },
+            "Assignee": "4",
+            "dependencies": []
+        },
+        {
+            "storyId": "CUCO-5",
+            "title": "Frontend story 1 for Shyam",
+            "description": "Test description",
+            "priority": "1",
+            "type": "BUG",
+            "specialities": [
+                "Frontend"
+            ],
+            "sprints": [
+                "25C1"
+            ],
+            "estimatedDuration": {
+                "days": "50",
+                "hours": "0"
+            },
+            "Assignee": "5",
+            "dependencies": []
+        },
+        {
+            "storyId": "CUCO-6",
+            "title": "Frontend story 1 for Shyam",
+            "description": "Test description",
+            "priority": "1",
+            "type": "FEATURE",
+            "specialities": [
+                "Frontend"
+            ],
+            "sprints": [
+                "25C1"
+            ],
+            "estimatedDuration": {
+                "days": "50",
+                "hours": "0"
+            },
+            "Assignee": "6",
+            "dependencies": []
+        },
+        {
+            "storyId": "CUCO-7",
+            "title": "Frontend story 1 for Shyam",
+            "description": "Test description",
+            "priority": "1",
+            "type": "IMPROVEMENT",
+            "specialities": [
+                "Frontend"
+            ],
+            "sprints": [
+                "25C1"
+            ],
+            "estimatedDuration": {
+                "days": "50",
+                "hours": "0"
+            },
+            "Assignee": "7",
+            "dependencies": []
+        },
+        {
+            "storyId": "CUCO-8",
+            "title": "Frontend story 1 for Shyam",
+            "description": "Test description",
+            "priority": "1",
+            "type": "MAINTENANCE",
+            "specialities": [
+                "Frontend"
+            ],
+            "sprints": [
+                "25C1"
+            ],
+            "estimatedDuration": {
+                "days": "50",
+                "hours": "0"
+            },
+            "Assignee": "8",
+            "dependencies": []
+        },
+        {
+            "storyId": "CUCO-9",
+            "title": "Frontend story 1 for Shyam",
+            "description": "Test description",
+            "priority": "1",
+            "type": "BUG",
+            "specialities": [
+                "Frontend"
+            ],
+            "sprints": [
+                "25C1"
+            ],
+            "estimatedDuration": {
+                "days": "50",
+                "hours": "0"
+            },
+            "Assignee": "9",
+            "dependencies": []
+        },
+        {
+            "storyId": "CUCO-10",
+            "title": "Frontend story 1 for Shyam",
+            "description": "Test description",
+            "priority": "1",
+            "type": "FEATURE",
+            "specialities": [
+                "Frontend"
+            ],
+            "sprints": [
+                "25C1"
+            ],
+            "estimatedDuration": {
+                "days": "50",
+                "hours": "0"
+            },
+            "Assignee": "10",
+            "dependencies": []
+        },
+        {
+            "storyId": "CUCO-11",
+            "title": "Frontend story 1 for Shyam",
+            "description": "Test description",
+            "priority": "1",
+            "type": "IMPROVEMENT",
+            "specialities": [
+                "Frontend"
+            ],
+            "sprints": [
+                "25C1"
+            ],
+            "estimatedDuration": {
+                "days": "50",
+                "hours": "0"
+            },
+            "Assignee": "11",
+            "dependencies": []
+        }
+    ],
+    "PiStartDate": "2025-07-01T00:00:00.000Z",
+    "PiEndDate": "2025-08-29T00:00:00.000Z",
+    "hoursPerDay": "8"
+}
