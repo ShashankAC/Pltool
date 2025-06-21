@@ -155,7 +155,7 @@
     ],
     "stories": [
         {
-            "storyId": "CUCO-1",
+            "storyId": "CUCO-1234567",
             "title": "Frontend story 1 for shashank",
             "description": "Test description",
             "priority": "1",
@@ -164,10 +164,10 @@
                 "Frontend"
             ],
             "sprints": [
-                "25C1"
+                {"name" : "25C1", "allocation" : { "days": "5", "hours": "0"}}
             ],
             "estimatedDuration": {
-                "days": "50",
+                "days": "5",
                 "hours": "0"
             },
             "Assignee": "1",
@@ -183,10 +183,10 @@
                 "Frontend"
             ],
             "sprints": [
-                "25C1"
+                {"name" : "25C1", "allocation" : { "days": "5", "hours": "0"}}
             ],
             "estimatedDuration": {
-                "days": "50",
+                "days": "5",
                 "hours": "0"
             },
             "Assignee": "2",
@@ -202,10 +202,10 @@
                 "Frontend"
             ],
             "sprints": [
-                "25C1"
+                {"name" : "25C1", "allocation" : { "days": "5", "hours": "0"}}
             ],
             "estimatedDuration": {
-                "days": "50",
+                "days": "5",
                 "hours": "0"
             },
             "Assignee": "3",
@@ -221,10 +221,10 @@
                 "Frontend"
             ],
             "sprints": [
-                "25C1"
+                {"name" : "25C1", "allocation" : { "days": "5", "hours": "0"}}
             ],
             "estimatedDuration": {
-                "days": "50",
+                "days": "5",
                 "hours": "0"
             },
             "Assignee": "4",
@@ -240,10 +240,10 @@
                 "Frontend"
             ],
             "sprints": [
-                "25C1"
+                {"name" : "25C1", "allocation" : { "days": "5", "hours": "0"}}
             ],
             "estimatedDuration": {
-                "days": "50",
+                "days": "5",
                 "hours": "0"
             },
             "Assignee": "5",
@@ -259,10 +259,10 @@
                 "Frontend"
             ],
             "sprints": [
-                "25C1"
+                {"name" : "25C1", "allocation" : { "days": "5", "hours": "0"}}
             ],
             "estimatedDuration": {
-                "days": "50",
+                "days": "5",
                 "hours": "0"
             },
             "Assignee": "6",
@@ -278,10 +278,10 @@
                 "Frontend"
             ],
             "sprints": [
-                "25C1"
+                {"name" : "25C1", "allocation" : { "days": "5", "hours": "0"}}
             ],
             "estimatedDuration": {
-                "days": "50",
+                "days": "5",
                 "hours": "0"
             },
             "Assignee": "7",
@@ -297,10 +297,10 @@
                 "Frontend"
             ],
             "sprints": [
-                "25C1"
+                {"name" : "25C1", "allocation" : { "days": "5", "hours": "0"}}
             ],
             "estimatedDuration": {
-                "days": "50",
+                "days": "5",
                 "hours": "0"
             },
             "Assignee": "8",
@@ -316,10 +316,10 @@
                 "Frontend"
             ],
             "sprints": [
-                "25C1"
+                {"name" : "25C1", "allocation" : { "days": "5", "hours": "0"}}
             ],
             "estimatedDuration": {
-                "days": "50",
+                "days": "5",
                 "hours": "0"
             },
             "Assignee": "9",
@@ -335,10 +335,10 @@
                 "Frontend"
             ],
             "sprints": [
-                "25C1"
+                {"name" : "25C1", "allocation" : { "days": "5", "hours": "0"}}
             ],
             "estimatedDuration": {
-                "days": "50",
+                "days": "5",
                 "hours": "0"
             },
             "Assignee": "10",
@@ -354,10 +354,219 @@
                 "Frontend"
             ],
             "sprints": [
-                "25C1"
+                {"name" : "25C2", "allocation" : { "days": "5", "hours": "0"}}
             ],
             "estimatedDuration": {
-                "days": "50",
+                "days": "5",
+                "hours": "0"
+            },
+            "Assignee": "11",
+            "dependencies": []
+        },
+        {
+            "storyId": "CUCO-12",
+            "title": "Frontend story 1 for shashank",
+            "description": "Test description",
+            "priority": "1",
+            "type": "BUG",
+            "specialities": [
+                "Frontend"
+            ],
+            "sprints": [
+                {"name" : "25C2", "allocation" : { "days": "5", "hours": "0"}}
+            ],
+            "estimatedDuration": {
+                "days": "5",
+                "hours": "0"
+            },
+            "Assignee": "1",
+            "dependencies": []
+        },
+        {
+            "storyId": "CUCO-13",
+            "title": "Frontend story 1 for Ali",
+            "description": "Test description",
+            "priority": "1",
+            "type": "FEATURE",
+            "specialities": [
+                "Frontend"
+            ],
+            "sprints": [
+                {"name" : "25C2", "allocation" : { "days": "5", "hours": "0"}}
+            ],
+            "estimatedDuration": {
+                "days": "5",
+                "hours": "0"
+            },
+            "Assignee": "2",
+            "dependencies": []
+        },
+        {
+            "storyId": "CUCO-14",
+            "title": "Frontend story 1 for Nihar",
+            "description": "Test description",
+            "priority": "1",
+            "type": "IMPROVEMENT",
+            "specialities": [
+                "Frontend"
+            ],
+            "sprints": [
+                {"name" : "25C2", "allocation" : { "days": "5", "hours": "0"}}
+            ],
+            "estimatedDuration": {
+                "days": "5",
+                "hours": "0"
+            },
+            "Assignee": "3",
+            "dependencies": []
+        },
+        {
+            "storyId": "CUCO-15",
+            "title": "Backend story 1 for Nitesh",
+            "description": "Test description",
+            "priority": "1",
+            "type": "MAINTENANCE",
+            "specialities": [
+                "Frontend"
+            ],
+            "sprints": [
+                {"name" : "25C2", "allocation" : { "days": "5", "hours": "0"}}
+            ],
+            "estimatedDuration": {
+                "days": "5",
+                "hours": "0"
+            },
+            "Assignee": "4",
+            "dependencies": []
+        },
+        {
+            "storyId": "CUCO-16",
+            "title": "Frontend story 1 for Shyam",
+            "description": "Test description",
+            "priority": "1",
+            "type": "BUG",
+            "specialities": [
+                "Frontend"
+            ],
+            "sprints": [
+                {"name" : "25C2", "allocation" : { "days": "5", "hours": "0"}}
+            ],
+            "estimatedDuration": {
+                "days": "5",
+                "hours": "0"
+            },
+            "Assignee": "5",
+            "dependencies": []
+        },
+        {
+            "storyId": "CUCO-17",
+            "title": "Frontend story 1 for Shyam",
+            "description": "Test description",
+            "priority": "1",
+            "type": "FEATURE",
+            "specialities": [
+                "Frontend"
+            ],
+            "sprints": [
+                {"name" : "25C2", "allocation" : { "days": "5", "hours": "0"}}
+            ],
+            "estimatedDuration": {
+                "days": "5",
+                "hours": "0"
+            },
+            "Assignee": "6",
+            "dependencies": []
+        },
+        {
+            "storyId": "CUCO-18",
+            "title": "Frontend story 1 for Shyam",
+            "description": "Test description",
+            "priority": "1",
+            "type": "IMPROVEMENT",
+            "specialities": [
+                "Frontend"
+            ],
+            "sprints": [
+                {"name" : "25C2", "allocation" : { "days": "5", "hours": "0"}}
+            ],
+            "estimatedDuration": {
+                "days": "5",
+                "hours": "0"
+            },
+            "Assignee": "7",
+            "dependencies": []
+        },
+        {
+            "storyId": "CUCO-19",
+            "title": "Frontend story 1 for Shyam",
+            "description": "Test description",
+            "priority": "1",
+            "type": "MAINTENANCE",
+            "specialities": [
+                "Frontend"
+            ],
+            "sprints": [
+                {"name" : "25C2", "allocation" : { "days": "5", "hours": "0"}}
+            ],
+            "estimatedDuration": {
+                "days": "5",
+                "hours": "0"
+            },
+            "Assignee": "8",
+            "dependencies": []
+        },
+        {
+            "storyId": "CUCO-20",
+            "title": "Frontend story 1 for Shyam",
+            "description": "Test description",
+            "priority": "1",
+            "type": "BUG",
+            "specialities": [
+                "Frontend"
+            ],
+            "sprints": [
+                {"name" : "25C2", "allocation" : { "days": "5", "hours": "0"}}
+            ],
+            "estimatedDuration": {
+                "days": "5",
+                "hours": "0"
+            },
+            "Assignee": "9",
+            "dependencies": []
+        },
+        {
+            "storyId": "CUCO-21",
+            "title": "Frontend story 1 for Shyam",
+            "description": "Test description",
+            "priority": "1",
+            "type": "FEATURE",
+            "specialities": [
+                "Frontend"
+            ],
+            "sprints": [
+                {"name" : "25C2", "allocation" : { "days": "5", "hours": "0"}}
+            ],
+            "estimatedDuration": {
+                "days": "5",
+                "hours": "0"
+            },
+            "Assignee": "10",
+            "dependencies": []
+        },
+        {
+            "storyId": "CUCO-22",
+            "title": "Frontend story 1 for Shyam",
+            "description": "Test description",
+            "priority": "1",
+            "type": "IMPROVEMENT",
+            "specialities": [
+                "Frontend"
+            ],
+            "sprints": [
+                {"name" : "25C2", "allocation" : { "days": "5", "hours": "0"}}
+            ],
+            "estimatedDuration": {
+                "days": "5",
                 "hours": "0"
             },
             "Assignee": "11",

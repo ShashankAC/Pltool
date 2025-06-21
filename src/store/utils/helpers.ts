@@ -1,5 +1,5 @@
 import { PickerValue } from "@mui/x-date-pickers/internals";
-import { Story, TeamMember, TimeDuration } from "./types";
+import { Sprint, Story, TeamMember, TimeDuration } from "./types";
 import dayjs, { Dayjs } from "dayjs";
 
 export function getNoOfWeekendDays(startDate: Dayjs, endDate: Dayjs): number {
@@ -134,4 +134,35 @@ export function getMemberAvailableEffortInDays(startDate: Dayjs, endDate: Dayjs,
     return availableEffort;
 }
 
+export function getStoriesInSprint(stories: Story[], sprint: Sprint): Story[] {
+    return stories.filter((story) => story.sprints.find((s) => s.name === sprint.name));
+}
+
+function uniqueStringsArray(array: Array<string>): string[] {
+    const result: string[] = [];
+    array.forEach((item) => {
+        if (result.indexOf(item) === -1) {
+            result.push(item);
+        }
+    })
+    return result;
+} 
+
+export function getMemberCountInSprint(stories: Story[], members: TeamMember[]): number {
+    let memberIds: string[] = [];
+    stories.forEach((story) => {
+        memberIds.push(story.Assignee);
+    });
+    return uniqueStringsArray(memberIds).length;
+}
+
+export function getNumberOfWorkingDays(startDate: Dayjs, endDate: Dayjs, holidays: Array<string>): number {
+    let result = 0;
+    for (let i = Object.assign(startDate); i.isBefore(endDate.add(1, 'day')); i = i.add(1, 'day')) {
+        if (!isHoliday(i.toISOString(), holidays) && !isWeekend(i)) {
+            result++;
+        }
+    }
+    return result;
+}
 

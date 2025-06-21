@@ -2,6 +2,7 @@ import LandingScreen from "./pages/LandingScreen";
 import PiDetails from "./pages/PiDetails";
 import PIView from "./pages/PIView";
 import SchemaPage from "./pages/SchemaPage";
+import SprintsView from "./pages/SprintsView";
 
 function CurrentView({
     pathname,
@@ -19,6 +20,8 @@ function CurrentView({
             return <SchemaPage />
         case '/piView':
             return <PIView />
+        case '/sprintsView':
+            return <SprintsView />
         default:
             return <>404 Page not found</>
     }

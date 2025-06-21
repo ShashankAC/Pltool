@@ -40,7 +40,7 @@ const NAVIGATION: Navigation = [
     icon: <LightbulbIcon />,
   },
   {
-    segment: 'sprints',
+    segment: 'sprintsView',
     title: 'Sprints',
     icon: <DirectionsRunIcon />,
   },

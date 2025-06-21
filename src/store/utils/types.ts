@@ -3,6 +3,11 @@ export type TimeDuration = {
     hours: string;
 }
 
+export type SprintAllocation = {
+    name: string;
+    allocation: TimeDuration;
+}
+
 export type Story = {
     storyId: string;
     priority: string;
@@ -10,7 +15,7 @@ export type Story = {
     title: string;
     description: string;
     estimatedDuration: TimeDuration;
-    sprints: string[];
+    sprints: SprintAllocation[];
     specialities: string[];
     Assignee: string;
     dependencies?: string[];
