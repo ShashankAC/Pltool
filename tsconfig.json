@@ -1,12 +1,12 @@
 {
-    "compilerOptions": {
-      "target": "es5",
-      "module": "esnext",
-      "jsx": "react-jsx",
-      "strict": true,
-      "moduleResolution": "node",
-      "esModuleInterop": true
-    },
-    "include": ["src", "webpack.config.js"]
-  }
+  "compilerOptions": {
+    "target": "es5",
+    "module": "esnext",
+    "jsx": "react-jsx",
+    "strict": true,
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+  },
+  "include": ["src", "webpack.config.js"]
+}
   

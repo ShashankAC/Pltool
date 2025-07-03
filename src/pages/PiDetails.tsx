@@ -13,11 +13,11 @@ import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select'
 import { addSpecialitiesToStore, addSprintToStore, addStoryToStore, deleteHoliday, deleteSpecialityFromStore, deleteSprint, PiState, removeTeamMember, setEndDate, setHolidays, setHoursPerDay, setPiNumber, setStartDate, setTeamName, setTeamSize } from '../store/PiSlice';
 import dayjs, { Dayjs } from "dayjs";
-import { Sprint, SprintAllocation, TeamMember } from '../store/utils/types';
+import { Sprint, SprintAllocation, SprintType, TeamMember } from '../store/utils/types';
 import { useDispatch, useSelector } from 'react-redux';
 import { addTeamMembers } from '../store/PiSlice';
 import { CustomTabPanel, a11yProps } from '../components/CustomTabPanel';
-import { getNoOfWorkingDays, isHoliday, isWeekend } from '../store/utils/helpers';
+import { getMemberNameFromId, getNoOfWorkingDays, isHoliday, isWeekend } from '../store/utils/helpers';
 
 function PiDetails() {
     const [member, setMember] = useState<TeamMember>();
@@ -38,6 +38,8 @@ function PiDetails() {
     const [storyPriority, setStoryPriority] = useState<string>('');
     const [storyTitle, setStoryTitle] = useState<string>('');
     const [sprintName, setSprintName] = useState<string>('');
+    const [sprintType, setSprintType] = useState<SprintType>('REGULAR');
+    const [sprintSupportMembers, setSprintSupportMembers] = useState<string[]>([]);
     const [sprintStartDate, setSprintStartDate] = useState<Dayjs>();
     const [sprintEndDate, setSprintEndDate] = useState<Dayjs>();
     const [storyDurationDays, setStoryDurationDays] = useState<string>('');
@@ -51,9 +53,9 @@ function PiDetails() {
     const [holidaysError, setHolidaysError] = useState('');
     const [plannedLeavesError, setPlannedLeavesError] = useState('');
     const [sprintDateError, setSprintDateError] = useState('');
-    const [sprintAllocationError, setSprintAllocationError] = useState('');
 
     const details = useSelector((state: PiState) => state.details);
+    const teamMembers = useSelector((state: PiState) => state.details.teamMembers);
     const holidays = useSelector((state: PiState) => state.details.holidays);
     const hoursPerDay = useSelector((state: PiState) => state.details.hoursPerDay);
     const dispatch = useDispatch();
@@ -62,7 +64,7 @@ function PiDetails() {
     const addNewMember = () => {
         setAddTeamMembersError('');
         console.log(memberName, memberSpecialities, plannedLeaves);
-        if (memberName && memberSpecialities.length && plannedLeaves.length) {
+        if (memberName && memberSpecialities?.length && plannedLeaves?.length) {
             setMember({ id: `${Math.floor(1000 + Math.random() * 9000)}`, name: memberName, specialities: memberSpecialities, plannedLeaves: plannedLeaves});
         } else {
             setAddTeamMembersError('Add all details');
@@ -74,13 +76,14 @@ function PiDetails() {
     }
 
     const addNewSprint = () => {
-        if (sprintName && sprintStartDate && sprintEndDate) {
-            setSprint({ name: sprintName, start: sprintStartDate.toISOString(), end: sprintEndDate.toISOString()});
+        if (sprintName && sprintStartDate && sprintEndDate && sprintSupportMembers?.length) {
+            setSprint({ name: sprintName, start: sprintStartDate.toISOString(), end: sprintEndDate.toISOString(), supportMembers: sprintSupportMembers, type: sprintType});
         }
         setSprintName('');
         setSprintStartDate(undefined);
         setSprintEndDate(undefined);
         setOpenSprints(false);
+        setSprintSupportMembers([]);
     }
 
     const validateStoryDuration = () => {
@@ -90,14 +93,14 @@ function PiDetails() {
                 totalSprintAllocation = parseFloat(a.allocation.days) + parseFloat(a.allocation.hours)/parseFloat(hoursPerDay);
             })
             if (parseFloat(storyDurationDays) + parseFloat(storyDurationHours)/parseFloat(hoursPerDay) < totalSprintAllocation) {
-                setSprintAllocationError("You have allocated more time in the sprints than the story's estimated duration.");
+                // setSprintAllocationError("You have allocated more time in the sprints than the story's estimated duration.");
             }
         }
     }
 
     const addNewStory = () => {
         validateStoryDuration();
-        if (storyId && storyDescription && storySpecialities && sprintAllocations.length && storyDurationDays && storyDurationHours) {
+        if (storyId && storyDescription && storySpecialities && sprintAllocations?.length && storyDurationDays && storyDurationHours) {
             dispatch(addStoryToStore({ storyId: storyId, title: storyTitle, description: storyDescription, priority: storyPriority, type: storyType, specialities: storySpecialities, sprints: sprintAllocations, estimatedDuration: { days: storyDurationDays, hours: storyDurationHours }, Assignee: storyAssignee, dependencies: storyDependencies }));
             setAddStory((prev) => !prev);
         }
@@ -158,7 +161,7 @@ function PiDetails() {
 
     const addSprintAllocation = () => {
         if (sprintAllocationDays && sprintAllocationHours) {
-            const currentSprintAllocation = sprintAllocations[sprintAllocations.length - 1];
+            const currentSprintAllocation = sprintAllocations[sprintAllocations?.length - 1];
             const currentAllocations = [...sprintAllocations];
             currentAllocations.map((spAl) => {
             if (spAl.name === currentSprintAllocation.name) {
@@ -170,7 +173,7 @@ function PiDetails() {
             setSprintAllocationDays('');
             setSprintAllocationHours('');
         } else {
-            setSprintAllocationError('Need to estimate duration of the story in the sprint.');
+            // setSprintAllocationError('Need to estimate duration of the story in the sprint.');
         }
     }
 
@@ -183,7 +186,7 @@ function PiDetails() {
     }
 
     const handleSaveSpeciality = () => {
-        if (addSpeciality.length) {
+        if (addSpeciality?.length) {
             dispatch(addSpecialitiesToStore(addSpeciality));
         }
     }
@@ -210,6 +213,18 @@ function PiDetails() {
 
     const handleDeleteStorySprint = (sprint: SprintAllocation) => {
         setSprintAllocations((prev) => prev.filter((s) => s !== sprint));
+    }
+
+    const handleSupportMemberChange = (event: SelectChangeEvent<string>) => {
+        setSprintSupportMembers([...sprintSupportMembers, event.target.value])
+    }
+
+    const handleDeleteSupportMember = (member: string) => {
+        setSprintSupportMembers((prev) => prev.filter((m) => m !== member));
+    }
+
+    const handleSprintTypeChange = (event: SelectChangeEvent<string>) => {
+        setSprintType(event.target.value as SprintType);
     }
 
     return (
@@ -322,7 +337,7 @@ function PiDetails() {
                     <Typography>Holidays</Typography>
                     <DatePicker
                         format='DD/MM/YYYY'
-                        value={details?.holidays?.length ? dayjs(holidays[holidays.length - 1]) : holidaysState?.length ? dayjs(holidaysState[holidaysState.length - 1]) : null}
+                        value={details?.holidays?.length ? dayjs(holidays[holidays?.length - 1]) : holidaysState?.length ? dayjs(holidaysState[holidaysState?.length - 1]) : null}
                         onChange={(event) => {
                             setHolidaysError('');
                             if (isWeekend(dayjs(event).set('hour', 5).set('minute', 30).set('second', 0).set('millisecond', 0))) {
@@ -351,7 +366,6 @@ function PiDetails() {
                 <Grid container spacing={1} direction="column" gap={5} width="25%">
                     <Grid  size={10} direction="column">
                         <>
-                        <Typography>Add Team Members</Typography>
                         <Button startIcon={<AddIcon/>} onClick={() => setOpenMembers((prev) => !prev)}>Add Team member</Button>
                         <Collapse in={openMembers}>
                             <TextField
@@ -363,12 +377,12 @@ function PiDetails() {
                                     setMemberName(event.target.value);
                                 }}
                             />
-                            <FormControl sx={{ margin: '10px' }} fullWidth>
+                            <FormControl fullWidth>
                                 <InputLabel id="select-speciality">Select Speciality</InputLabel>
                                 <Select
                                     labelId="select-speciality"
                                     id="select-speciality"
-                                    value={memberSpecialities[memberSpecialities.length - 1]}
+                                    value={memberSpecialities[memberSpecialities?.length - 1]}
                                     label="Speciality"
                                     onChange={handleMemberSpecialityChange}
                                 >
@@ -378,7 +392,7 @@ function PiDetails() {
                             <Typography>Planned Leaves</Typography>
                             <DatePicker
                                 format='DD/MM/YYYY'
-                                value= {plannedLeaves.length ? dayjs(plannedLeaves[plannedLeaves.length - 1]) : null}
+                                value= {plannedLeaves?.length ? dayjs(plannedLeaves[plannedLeaves?.length - 1]) : null}
                                 onChange={(event) => {
                                     setPlannedLeavesError('');
                                     if (isHoliday(dayjs(event).set('hour', 5).set('minute', 30).set('second', 0).set('millisecond', 0), holidays)) {
@@ -397,7 +411,9 @@ function PiDetails() {
                                 }}
                             />
                             <Typography sx={{ color: 'red' }}>{plannedLeavesError}</Typography>
-                            {plannedLeaves?.map((leave) => <Chip key={leave} label={dayjs(leave).format('DD/MM/YYYY')} onDelete={() => handleDeletePlannedLeave(leave)} />)}
+                            <Box sx={{ display: 'flex' }}>
+                                {plannedLeaves?.map((leave) => <Chip key={leave} label={dayjs(leave).format('DD/MM/YYYY')} onDelete={() => handleDeletePlannedLeave(leave)} />)}
+                            </Box>
                             <Button sx={{ margin: '5px' }} variant='contained' onClick={addNewMember}  endIcon={<AddIcon />}>Add Team Member</Button>
                         </Collapse>
                         <Typography color='red'>{addTeamMembersError}</Typography>
@@ -437,11 +453,38 @@ function PiDetails() {
                                 <Typography>Sprint Name</Typography>
                                 <TextField
                                     id="sprint-number"
+                                    margin='normal'
                                     value={storyId}
                                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                                         setSprintName(event.target.value);
                                     }}
                                 />
+                                <FormControl sx={{ marginTop: '10px' }} fullWidth>
+                                    <InputLabel id="select-speciality">Select Sprint Type</InputLabel>
+                                    <Select
+                                        labelId="select-sprint"
+                                        id="select-sprint"
+                                        value={sprintType}
+                                        label="Sprint"
+                                        onChange={handleSprintTypeChange}
+                                    >
+                                        <MenuItem key={1} value={'REGULAR'}>REGULAR</MenuItem>
+                                        <MenuItem key={2} value={'STRETCH'}>STRETCH</MenuItem>
+                                    </Select>
+                                </FormControl>
+                                <FormControl sx={{ marginTop: '10px' }} fullWidth>
+                                    <InputLabel id="select-speciality">Select Support Members</InputLabel>
+                                    <Select
+                                        labelId="select-speciality"
+                                        id="select-speciality"
+                                        value={sprintSupportMembers[sprintSupportMembers?.length - 1]}
+                                        label="Speciality"
+                                        onChange={handleSupportMemberChange}
+                                    >
+                                        {details.teamMembers?.map((member) => <MenuItem key={member.id} value={member.id}>{member.name}</MenuItem>)}
+                                    </Select>
+                                    {sprintSupportMembers.map((member) => <Chip label={getMemberNameFromId(member, teamMembers)} onDelete={handleDeleteSupportMember}/>)}
+                                </FormControl>
                                 <Typography>Start Date</Typography>
                                 <DatePicker
                                     format='DD/MM/YYYY'
@@ -566,7 +609,7 @@ function PiDetails() {
                                     <Select
                                         labelId="select-sprint-label"
                                         id="select-sprint"
-                                        value={sprintAllocations[sprintAllocations.length - 1]?.name || ''}
+                                        value={sprintAllocations[sprintAllocations?.length - 1]?.name || ''}
                                         label="assignee"
                                         onChange={handleSprintChange}
                                     >
@@ -602,7 +645,7 @@ function PiDetails() {
                                     <Select
                                         labelId="select-speciality"
                                         id="select-speciality"
-                                        value={storySpecialities[storySpecialities.length - 1]}
+                                        value={storySpecialities[storySpecialities?.length - 1]}
                                         label="assignee"
                                         onChange={handleStorySpecialityChange}
                                     >

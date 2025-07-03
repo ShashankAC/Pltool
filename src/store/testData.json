@@ -132,47 +132,42 @@
         {
             "name": "25C1",
             "start": "2025-07-01T00:00:00.000Z",
-            "end": "2025-07-15T00:00:00.000Z"
+            "end": "2025-07-15T00:00:00.000Z",
+            "supportMembers": ["1", "2"],
+            "type": "REGULAR"
         },
         {
             "name": "25C2",
             "start": "2025-07-16T00:00:00.000Z",
-            "end": "2025-07-31T00:00:00.000Z"
+            "end": "2025-07-31T00:00:00.000Z",
+            "supportMembers": ["3", "4"],
+            "type": "REGULAR"
         },
         {
             "name": "25C3",
             "start": "2025-08-01T00:00:00.000Z",
-            "end": "2025-08-15T00:00:00.000Z"
+            "end": "2025-08-15T00:00:00.000Z",
+            "supportMembers": ["5", "6"],
+            "type": "REGULAR"
         },
         {
             "name": "25C4",
             "start": "2025-08-16T00:00:00.000Z",
-            "end": "2025-08-29T00:00:00.000Z"
+            "end": "2025-08-29T00:00:00.000Z",
+            "type": "REGULAR"
+        },
+        {
+            "name": "25C5",
+            "start": "2025-09-01T00:00:00.000Z",
+            "end": "2025-09-15T00:00:00.000Z",
+            "type": "STRETCH"
         }
+
     ],
     "specialities": [
         "Frontend", "Backend", "QA", "UX", "BA", "Architect"
     ],
     "stories": [
-        {
-            "storyId": "CUCO-1234567",
-            "title": "Frontend story 1 for shashank",
-            "description": "Test description",
-            "priority": "1",
-            "type": "BUG",
-            "specialities": [
-                "Frontend"
-            ],
-            "sprints": [
-                {"name" : "25C1", "allocation" : { "days": "5", "hours": "0"}}
-            ],
-            "estimatedDuration": {
-                "days": "5",
-                "hours": "0"
-            },
-            "Assignee": "1",
-            "dependencies": []
-        },
         {
             "storyId": "CUCO-2",
             "title": "Frontend story 1 for Ali",
@@ -190,6 +185,25 @@
                 "hours": "0"
             },
             "Assignee": "2",
+            "dependencies": []
+        },
+        {
+            "storyId": "CUCO-1234567",
+            "title": "Frontend story 1 for shashank",
+            "description": "Test description",
+            "priority": "1",
+            "type": "BUG",
+            "specialities": [
+                "Frontend"
+            ],
+            "sprints": [
+                {"name" : "25C1", "allocation" : { "days": "5", "hours": "0"}}
+            ],
+            "estimatedDuration": {
+                "days": "5",
+                "hours": "0"
+            },
+            "Assignee": "1",
             "dependencies": []
         },
         {

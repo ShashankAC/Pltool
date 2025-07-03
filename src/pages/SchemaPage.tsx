@@ -1,21 +1,48 @@
-import { useEffect, useState } from "react";
-import { Alert, Box, Button, TextField, Typography } from "@mui/material";
+import { useState } from "react";
+import { Alert, Box, Button, Typography } from "@mui/material";
 import { useDispatch, useSelector } from 'react-redux';
 import { PiDetails } from "../store/utils/types";
-import { PiState, setEndDate, setHolidays, setPIdetails, setPiNumber, setSprints, setStartDate, setStories, setTeamMembers, setTeamName, setTeamSize } from "../store/PiSlice";
+import { PiState, setPIdetails } from "../store/PiSlice";
+import CodeMirror from '@uiw/react-codemirror';
+import { json } from "@codemirror/lang-json";
+import JsonEditor from "../components/JsonEditor";
+import { isValidJson } from "../store/utils/helpers";
 
 function SchemaPage() {
     const details = useSelector((state: PiState) => state.details);
     console.log('details = ', details);
-    const [schemaString, setSchemaString] = useState<string>(JSON.stringify(details));
+    const [jsonValue, setJsonValue] = useState<string>(JSON.stringify(details));
     const [schemaError, setSchemaError] = useState<string>('');
     const [schemaSuccess, setSchemaSuccess] = useState<string>('');
-    const [schemaObj, setSchemaObject] = useState<PiDetails>(details);
     const dispatch = useDispatch();
 
-    const evaluateSchema = (schemaString: string): boolean => {
+    const handleJsonChange = (raw: string) => {
+        const { isValid, parsed } = isValidJson(raw);
+        setSchemaError(isValid ? '' : 'Invalid JSON schema');
+        if (isValid && evaluateSchema(raw)) {
+            dispatch(setPIdetails(parsed));
+            setSchemaError('');
+            setSchemaSuccess('Success!');
+            setJsonValue(JSON.stringify(parsed, null, 2)); // Format on valid input
+        } else {
+            dispatch(setPIdetails({} as PiDetails));
+            setSchemaError('Invalid PI schema');
+        }
+    };
+
+    const handleFormatClick = () => {
         try {
-            const schema = JSON.parse(schemaString);
+        const formatted = JSON.stringify(JSON.parse(jsonValue), null, 2);
+        setJsonValue(formatted);
+        setSchemaError('');
+        } catch {
+            setSchemaError('Invalid JSON or schema');
+        }
+    };
+
+    const evaluateSchema = (editorValue: string): boolean => {
+        try {
+            const schema = JSON.parse(editorValue);
             if (schema?.teamName.length &&
                 schema?.piNumber.length &&
                 schema?.teamSize.length &&
@@ -28,44 +55,24 @@ function SchemaPage() {
                 schema?.PiEndDate &&
                 schema?.hoursPerDay.length
             ) {
-                setSchemaError('')
-                setSchemaObject(schema);
                 return true;
             }
         }
         catch (error: any) {
             console.log('error parsing: ', error);
-            setPIdetails({} as PiDetails);
-            setSchemaError('Invalid schema');
-            return false;
         }
         return false;
     }
-
-    useEffect(() => {
-        if (evaluateSchema(schemaString)) {
-           dispatch(setPIdetails(schemaObj));
-        }
-    }, [schemaString]);
-
-    useEffect(() => {
-        if (!schemaObj.teamName) {
-            setSchemaError('Invalid schema');
-        } else if (Object.keys(schemaObj).length) {
-            setSchemaSuccess('Success!');
-        }
-    }, [schemaString])
 
     return (
         <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', flexDirection: 'column' }}>
             <Typography>Paste the schema below.</Typography>
             {schemaError ? <Alert severity="error" variant="standard">{schemaError}</Alert>: null}
             {schemaSuccess && !schemaError ? <Alert severity="success" variant="standard">{schemaSuccess}</Alert> : null}
-            <textarea
-                name="Outlined"
-                value={schemaString}
-                onChange={(event) => setSchemaString(event.target.value)}
-            />
+            <JsonEditor value={jsonValue} onChange={handleJsonChange} />
+            <Button variant="contained" onClick={handleFormatClick} style={{ marginTop: "10px" ,width: '200px' }}>
+                Format JSON
+            </Button>
         </Box>
     );
 }

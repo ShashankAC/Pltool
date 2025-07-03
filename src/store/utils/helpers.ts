@@ -135,7 +135,7 @@ export function getMemberAvailableEffortInDays(startDate: Dayjs, endDate: Dayjs,
 }
 
 export function getStoriesInSprint(stories: Story[], sprint: Sprint): Story[] {
-    return stories.filter((story) => story.sprints.find((s) => s.name === sprint.name));
+    return stories.filter((story) => story.sprints.some((s) => s.name === sprint.name));
 }
 
 function uniqueStringsArray(array: Array<string>): string[] {
@@ -166,3 +166,77 @@ export function getNumberOfWorkingDays(startDate: Dayjs, endDate: Dayjs, holiday
     return result;
 }
 
+export function getMembersInSprint(storiesInTheSprint: Story[], members: TeamMember[]): TeamMember[] {
+    const memberIds: string[] = [];
+    let teamMembers: TeamMember[] = [];
+    storiesInTheSprint.forEach((story) => {
+        memberIds.push(story.Assignee);   
+    });
+    teamMembers = members.filter((member) => memberIds.includes(member.id));
+    return teamMembers;
+}
+
+export function getStoryPointsOfStory(story: Story, hoursPerDay: number): number {
+    return parseFloat(story.estimatedDuration.days) + parseFloat(story.estimatedDuration.hours)/hoursPerDay;
+}
+
+export function getMemberNameFromId(id: string, members: TeamMember[]): string {
+    return members.find((member) => member.id === id)?.name || 'Not a member';
+}
+
+export function getStoryPointsOfMembersInSprint(storiesInSprint: Story[], membersInSprint: TeamMember[], hoursPerDay: number) {
+    let result: { member: string, storyPoints: number }[] = [];
+    membersInSprint.forEach((member) => {
+        result.push({member: member.id, storyPoints: 0 });
+    });
+    storiesInSprint.forEach((story) => {
+        if (result.filter((r) => r.member === story.Assignee)) {
+            result[result.indexOf(result.filter((r) => r.member === story.Assignee)[0])].storyPoints += getStoryPointsOfStory(story, hoursPerDay)
+        }
+    })
+    result.forEach((r) => r.member = getMemberNameFromId(r.member, membersInSprint));
+    return result;
+}
+
+import { blue, red, green, amber, indigo, teal, deepPurple, orange } from '@mui/material/colors';
+
+
+
+export function generateColors(n: number): string[] {
+  const muiColors = [blue, red, green, amber, indigo, teal, deepPurple, orange];
+  const shades = ['300', '400', '500', '600', '700', '800', '900'];
+  const colors: string[] = [];
+
+  for (let i = 0; i < n; i++) {
+    const palette = muiColors[i % muiColors.length];
+    const shade = shades[i % shades.length];
+    const color = palette[shade as keyof typeof palette];
+
+    // Fallback in case the shade is missing
+    colors.push(color || palette[500]);
+  }
+  return colors;
+}
+
+import Ajv from "ajv";
+
+const ajv = new Ajv();
+
+export const isValidJson = (jsonStr: string) => {
+  try {
+    const parsed = JSON.parse(jsonStr);
+    const validate = ajv.compile({ type: "object" }); // Basic shape
+    const isValid = validate(parsed);
+    return { isValid, parsed };
+  } catch {
+    return { isValid: false };
+  }
+};
+
+export const formatJson = (input: string) => {
+  try {
+    return JSON.stringify(JSON.parse(input), null, 2); // Pretty-print
+  } catch {
+    return input;
+  }
+};

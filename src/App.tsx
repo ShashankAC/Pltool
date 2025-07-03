@@ -50,11 +50,6 @@ const NAVIGATION: Navigation = [
     icon: <AssignmentIcon />,
   },
   {
-    segment: 'estimations',
-    title: 'Estimations',
-    icon: <ScheduleIcon />,
-  },
-  {
     segment: 'teamMembers',
     title: 'Team Members',
     icon: <GroupsIcon />,

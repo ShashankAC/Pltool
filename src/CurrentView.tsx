@@ -3,6 +3,8 @@ import PiDetails from "./pages/PiDetails";
 import PIView from "./pages/PIView";
 import SchemaPage from "./pages/SchemaPage";
 import SprintsView from "./pages/SprintsView";
+import { useSelector } from "react-redux";
+import { PiDetails as PIDetails } from "./store/utils/types";
 
 function CurrentView({
     pathname,
@@ -11,6 +13,7 @@ function CurrentView({
     pathname: String,
     navigate: (path: string | URL) => void;
 }) {
+   const data = useSelector((state: { details: PIDetails }) => state.details);
     switch(pathname) {
         case '/':
             return <LandingScreen />;
@@ -19,11 +22,15 @@ function CurrentView({
         case '/addDetails/schema':
             return <SchemaPage />
         case '/piView':
-            return <PIView />
+            if (data?.teamName && data?.PiStartDate && data?.PiEndDate && data?.sprints.length) {
+                return <PIView />
+            }
         case '/sprintsView':
-            return <SprintsView />
+            if (data?.teamName && data?.PiStartDate && data?.PiEndDate && data?.sprints.length) {
+                return <SprintsView />
+            }
         default:
-            return <>404 Page not found</>
+            return <>404 or Invalid Schema</>
     }
 }
 

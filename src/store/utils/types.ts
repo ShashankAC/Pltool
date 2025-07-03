@@ -28,10 +28,14 @@ export type TeamMember = {
     plannedLeaves: string[];
 }
 
+export type SprintType = 'REGULAR' | 'STRETCH';
+
 export type Sprint = {
     name: string;
     start: string;
     end: string;
+    supportMembers: string[],
+    type: SprintType;
 }
 
 export type PiDetails = {
@@ -50,5 +54,8 @@ export type PiDetails = {
 
 export type FixedLengthArray<T, L extends number> = [T, ...T[]] & { length: L };
 
-// export type FixedLengthArray<T, L extends number, R extends T[] = []> = 
-//   R['length'] extends L ? R : FixedLengthArray<T, L, [T, ...R]>;
+export type BrickUnit = {
+    id: string;
+    description: string;
+    title: string;
+}
