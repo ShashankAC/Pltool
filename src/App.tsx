@@ -44,16 +44,16 @@ const NAVIGATION: Navigation = [
     title: 'Sprints',
     icon: <DirectionsRunIcon />,
   },
-  {
-    segment: 'stories',
-    title: 'Stories',
-    icon: <AssignmentIcon />,
-  },
-  {
-    segment: 'teamMembers',
-    title: 'Team Members',
-    icon: <GroupsIcon />,
-  },
+  // {
+  //   segment: 'stories',
+  //   title: 'Stories',
+  //   icon: <AssignmentIcon />,
+  // },
+  // {
+  //   segment: 'teamMembers',
+  //   title: 'Team Members',
+  //   icon: <GroupsIcon />,
+  // },
 ];
 
 function useDemoRouter(initialPath: string): Router {

@@ -3,6 +3,7 @@ import Brick from "./Brick";
 import React, { useEffect, useState } from 'react';
 import { generateColors } from "../store/utils/helpers";
 import { BrickUnit } from "../store/utils/types";
+import Tooltip from '@mui/material/Tooltip';
 
 interface GlowBricksProps {
   targets: BrickUnit[];
@@ -43,28 +44,35 @@ const GlowBricks: React.FC<GlowBricksProps> = ({
             justifyContent: 'space-between'
         }}
         >
-        <Box sx={{ width: '25%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          {sources.map((source, i) =>  <Brick
-                                      key={source.id}
-                                      label={source.title}
-                                      backgroundColor={brickColors[i]}
-                                      borderColor={brickBorderColor}
-                                      height={brickHeight}
-                                      width={brickWidth}
-                                      minWidth={brickMinWidth}
-                                    />
-            )}
+        <Box sx={{ width: '25%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', flexWrap: 'wrap' }}>
+          {sources.map((source, i) =>   <Brick
+                                          key={source.id}
+                                          label={source.title}
+                                          backgroundColor={brickColors[i]}
+                                          borderColor={brickBorderColor}
+                                          height={brickHeight}
+                                          width={brickWidth}
+                                          minWidth={brickMinWidth}
+                                        />
+          )}
         </Box>
-        <Box sx={{ width: '45%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            {targets.map((target) =>  <Brick
+        <Box sx={{ width: '45%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', flexWrap: 'wrap' }}>
+            {targets.map((target) =>  <Tooltip
                                         key={target.id}
-                                        label={target.title}
-                                        borderColor="blue"
-                                        backgroundColor={mapSourceColorToTarget(target.id)}
-                                        height={brickHeight}
-                                        width={brickWidth}
-                                        minWidth={brickMinWidth}
-                                      />
+                                        title={target.title}
+                                        placement="right-start"
+                                      >
+                                        <span>
+                                          <Brick
+                                            label={target.storyId || ''}
+                                            borderColor="blue"
+                                            backgroundColor={mapSourceColorToTarget(target.id)}
+                                            height={brickHeight}
+                                            width={brickWidth}
+                                            minWidth={brickMinWidth}
+                                          />
+                                        </span>
+                                      </Tooltip>
             )}
         </Box>
     </Box>

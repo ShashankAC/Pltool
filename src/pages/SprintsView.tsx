@@ -1,11 +1,11 @@
 import { Box, Card, CardContent, colors, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Typography } from "@mui/material";
 import { PieChart } from '@mui/x-charts/PieChart';
 import { useSelector } from "react-redux";
-import { PiDetails, Sprint, TeamMember } from "../store/utils/types";
+import { PiDetails, Sprint } from "../store/utils/types";
 import { useEffect, useState } from "react";
 import Chip from '@mui/material/Chip';
 import dayjs from "dayjs";
-import { getMemberCountInSprint, getMembersInSprint, getNumberOfHolidays, getNumberOfWorkingDays, getPossibleStoryPoints, getStoriesInSprint, getStoryPointsOfMembersInSprint, getTotalStoryPoints } from "../store/utils/helpers";
+import { getMemberCountInSprint, getMembersInSprint, getNumberOfHolidays, getNumberOfWorkingDays, getPossibleStoryPoints, getPrioritiesCount, getPrioritiesInSprint, getStoriesInSprint, getStoryPointsOfMembersInSprint, getTotalStoryPoints } from "../store/utils/helpers";
 import { BarChart } from '@mui/x-charts';
 import { Gauge } from '@mui/x-charts/Gauge';
 import { STORYTYPES } from "../store/utils/constants";
@@ -20,8 +20,16 @@ function SprintsView() {
     const [storiesBreakUp, setStoriesBreakup] = useState<any[]>([]);
     const [selectedSprintName, setSelectedSprintName] = useState<string>(sprints?.[0]?.name || '');
     const [selectedSprint, setSelectedSprint] = useState<Sprint>(sprints[0]);
-    const [storiesInSprint, _setStoriesInSprint] = useState(getStoriesInSprint(stories, selectedSprint));
-    const [membersInSprint, _setMembersInSprint] = useState(getMembersInSprint(storiesInSprint, members)); 
+    const [storiesInSprint, setStoriesInSprint] = useState(getStoriesInSprint(stories, selectedSprint));
+    const [membersInSprint, setMembersInSprint] = useState(getMembersInSprint(storiesInSprint, members));
+
+    useEffect(() => {
+        setStoriesInSprint(getStoriesInSprint(stories, selectedSprint));
+    }, [selectedSprint]);
+
+    useEffect(() => {
+        setMembersInSprint(getMembersInSprint(storiesInSprint, members));
+    }, [storiesInSprint])
 
     useEffect(() => {
             let storiesBreakUpList: Array<any> = [
@@ -61,7 +69,7 @@ function SprintsView() {
                 }
             }
         setStoriesBreakup(storiesBreakUpList);
-    }, [stories]);
+    }, [storiesInSprint]);
 
     const handleSprintChange = (event: SelectChangeEvent) => {
         setSelectedSprintName(event.target.value);
@@ -132,23 +140,48 @@ function SprintsView() {
                 </CardContent>
             </Card>
             <Card sx={{ minHeight: '250px', maxWidth: '340px', display: 'block', padding: '10px' }}>
-                <Typography sx={{textAlign: 'center'}} variant="h6" gutterBottom>Stories breakup</Typography>
+                <Typography sx={{textAlign: 'center'}} variant="h6" gutterBottom>Stories Type breakup</Typography>
                 <CardContent sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
                     <PieChart
                         series={[
                             {
-                            data: storiesBreakUp,
-                            innerRadius: 20,
-                            outerRadius: 40,
-                            paddingAngle: 3,
-                            cornerRadius: 3,
-                            startAngle: 0,
-                            endAngle: 360,
-                            cx: '50%',
-                            cy: '50%',
+                                data: storiesBreakUp,
+                                innerRadius: 20,
+                                outerRadius: 40,
+                                paddingAngle: 3,
+                                cornerRadius: 3,
+                                startAngle: 0,
+                                endAngle: 360,
+                                cx: '50%',
+                                cy: '50%',
                             }
                         ]}
                     />
+                </CardContent>
+            </Card>
+            <Card sx={{ minHeight: '250px', maxWidth: '340px', display: 'block', padding: '10px' }}>
+                <Typography sx={{textAlign: 'center'}} variant="h6" gutterBottom>Stories Priority breakup</Typography>
+                <CardContent sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+                        <BarChart
+                            sx={{
+                                width: '40% !important',
+                                overflow: 'visible !important',
+                            }}
+                            xAxis={[
+                                {
+                                id: 'barCategories',
+                                data: getPrioritiesInSprint(storiesInSprint),
+                                scaleType: 'band',
+                                },
+                            ]}
+                            series={[
+                                {
+                                data: getPrioritiesCount(storiesInSprint),
+                                },
+                            ]}
+                            height={150}
+                            width={320}
+                        />
                 </CardContent>
             </Card>
             <Card sx={{ maxHeight: '250px', minWidth: '340px', display: 'block', padding: '10px' }}>
@@ -157,7 +190,7 @@ function SprintsView() {
                 <Gauge
                     width={150}
                     height={150}
-                    value={getMemberCountInSprint(storiesInSprint, members)}
+                    value={getMemberCountInSprint(storiesInSprint, selectedSprint)}
                     valueMin={0}
                     valueMax={members.length}
                     text={({ value, valueMax }) => `${value} / ${valueMax}`}
@@ -206,7 +239,8 @@ function SprintsView() {
             targets={storiesInSprint.map((story) => {
                 return {
                     id: story.Assignee,
-                    title: story.storyId,
+                    storyId: story.storyId,
+                    title: story.title,
                     description: story.description
                 }
             })}

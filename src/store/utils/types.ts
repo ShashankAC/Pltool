@@ -56,6 +56,7 @@ export type FixedLengthArray<T, L extends number> = [T, ...T[]] & { length: L };
 
 export type BrickUnit = {
     id: string;
+    storyId?: string;
     description: string;
     title: string;
 }

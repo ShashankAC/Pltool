@@ -43,7 +43,6 @@ function PIView() {
                 value: 0,
                 label: 'MAINTENANCE'
             },
-
         ];
         if (stories.length) {
             for (let i = 0; i < stories.length; i++) {
@@ -71,7 +70,7 @@ function PIView() {
 
     const prepareSprintwiseStorytypeBreakup = (stories: Story[], sprints: Sprint[]) => {
         const result: {data: Array<number>, datakey: string, label: string}[] = [];
-        for (let i = 0; i < sprints.length; i++) {
+        for (let i = 0; i < Object.keys(STORYTYPES).length; i++) {
             result.push({data: [], datakey: '', label: ''});
         }
         result.forEach((r) => {
@@ -89,9 +88,7 @@ function PIView() {
                 }
             }
         }
-        for (let k = 0; k < Object.keys(STORYTYPES).length; k++) {
-
-        }
+        console.log('result = ', result);
         return result;
     }
 

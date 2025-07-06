@@ -17,16 +17,22 @@ function SchemaPage() {
     const dispatch = useDispatch();
 
     const handleJsonChange = (raw: string) => {
-        const { isValid, parsed } = isValidJson(raw);
-        setSchemaError(isValid ? '' : 'Invalid JSON schema');
-        if (isValid && evaluateSchema(raw)) {
-            dispatch(setPIdetails(parsed));
-            setSchemaError('');
-            setSchemaSuccess('Success!');
-            setJsonValue(JSON.stringify(parsed, null, 2)); // Format on valid input
-        } else {
+        if (!raw) {
+            setJsonValue('');
             dispatch(setPIdetails({} as PiDetails));
-            setSchemaError('Invalid PI schema');
+            setSchemaError('Invalid JSON schema');
+        } else {
+            const { isValid, parsed } = isValidJson(raw);
+            setSchemaError(isValid ? '' : 'Invalid JSON schema');
+            if (isValid && evaluateSchema(raw)) {
+                dispatch(setPIdetails(parsed));
+                setSchemaError('');
+                setSchemaSuccess('Success!');
+                setJsonValue(JSON.stringify(parsed, null, 2)); // Format on valid input
+            } else {
+                dispatch(setPIdetails({} as PiDetails));
+                setSchemaError('Invalid PI schema');
+            }
         }
     };
 

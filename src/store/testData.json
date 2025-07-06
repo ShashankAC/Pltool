@@ -189,7 +189,7 @@
         },
         {
             "storyId": "CUCO-1234567",
-            "title": "Frontend story 1 for shashank",
+            "title": "Frontend story 1 for Shashank",
             "description": "Test description",
             "priority": "1",
             "type": "BUG",
@@ -208,7 +208,7 @@
         },
         {
             "storyId": "CUCO-3",
-            "title": "Frontend story 1 for Nihar",
+            "title": "Frontend story 1 for Nitesh",
             "description": "Test description",
             "priority": "1",
             "type": "IMPROVEMENT",
@@ -227,7 +227,7 @@
         },
         {
             "storyId": "CUCO-4",
-            "title": "Backend story 1 for Nitesh",
+            "title": "Backend story 1 for Lav",
             "description": "Test description",
             "priority": "1",
             "type": "MAINTENANCE",
@@ -265,7 +265,7 @@
         },
         {
             "storyId": "CUCO-6",
-            "title": "Frontend story 1 for Shyam",
+            "title": "Frontend story 1 for Nihar",
             "description": "Test description",
             "priority": "1",
             "type": "FEATURE",
@@ -284,7 +284,7 @@
         },
         {
             "storyId": "CUCO-7",
-            "title": "Frontend story 1 for Shyam",
+            "title": "Frontend story 1 for Vijay",
             "description": "Test description",
             "priority": "1",
             "type": "IMPROVEMENT",
@@ -303,7 +303,7 @@
         },
         {
             "storyId": "CUCO-8",
-            "title": "Frontend story 1 for Shyam",
+            "title": "Frontend story 1 for Venkat",
             "description": "Test description",
             "priority": "1",
             "type": "MAINTENANCE",
@@ -322,7 +322,7 @@
         },
         {
             "storyId": "CUCO-9",
-            "title": "Frontend story 1 for Shyam",
+            "title": "Frontend story 1 for Anu",
             "description": "Test description",
             "priority": "1",
             "type": "BUG",
@@ -341,7 +341,7 @@
         },
         {
             "storyId": "CUCO-10",
-            "title": "Frontend story 1 for Shyam",
+            "title": "Frontend story 1 for Priyanka",
             "description": "Test description",
             "priority": "1",
             "type": "FEATURE",
@@ -360,7 +360,7 @@
         },
         {
             "storyId": "CUCO-11",
-            "title": "Frontend story 1 for Shyam",
+            "title": "Frontend story 1 for Prajna",
             "description": "Test description",
             "priority": "1",
             "type": "IMPROVEMENT",
@@ -550,7 +550,7 @@
         },
         {
             "storyId": "CUCO-21",
-            "title": "Frontend story 1 for Shyam",
+            "title": "Frontend story 1 for Priyanka",
             "description": "Test description",
             "priority": "1",
             "type": "FEATURE",
@@ -569,7 +569,7 @@
         },
         {
             "storyId": "CUCO-22",
-            "title": "Frontend story 1 for Shyam",
+            "title": "Frontend story 1 for Prajna",
             "description": "Test description",
             "priority": "1",
             "type": "IMPROVEMENT",

@@ -148,11 +148,13 @@ function uniqueStringsArray(array: Array<string>): string[] {
     return result;
 } 
 
-export function getMemberCountInSprint(stories: Story[], members: TeamMember[]): number {
+export function getMemberCountInSprint(stories: Story[], sprint: Sprint): number {
     let memberIds: string[] = [];
     stories.forEach((story) => {
         memberIds.push(story.Assignee);
     });
+    memberIds = memberIds.concat(sprint.supportMembers);
+    
     return uniqueStringsArray(memberIds).length;
 }
 
@@ -190,7 +192,7 @@ export function getStoryPointsOfMembersInSprint(storiesInSprint: Story[], member
         result.push({member: member.id, storyPoints: 0 });
     });
     storiesInSprint.forEach((story) => {
-        if (result.filter((r) => r.member === story.Assignee)) {
+        if (result.filter((r) => r.member === story.Assignee).length) {
             result[result.indexOf(result.filter((r) => r.member === story.Assignee)[0])].storyPoints += getStoryPointsOfStory(story, hoursPerDay)
         }
     })
@@ -204,7 +206,7 @@ import { blue, red, green, amber, indigo, teal, deepPurple, orange } from '@mui/
 
 export function generateColors(n: number): string[] {
   const muiColors = [blue, red, green, amber, indigo, teal, deepPurple, orange];
-  const shades = ['300', '400', '500', '600', '700', '800', '900'];
+  const shades = ['300', '400', '500', '600', '700', '800', '900', 'A100', 'A200', 'A400', 'A700'];
   const colors: string[] = [];
 
   for (let i = 0; i < n; i++) {
@@ -240,3 +242,36 @@ export const formatJson = (input: string) => {
     return input;
   }
 };
+
+export const getPrioritiesInSprint = (stories: Story[]) => {
+    let priorities: Array<string> = [];
+    stories.forEach((story) => {
+        priorities.push(story.priority);
+    });
+    return uniqueStringsArray(priorities);
+}
+
+function countPriorities(priorities: Array<string>): Array<number> {
+    let count = 1;
+    const counts = [];
+    console.log('priorities = ', priorities);
+    for (let i = 0; i < priorities.length; i++) {
+        if ( i > 0 && priorities[i] !== priorities[i-1]) {
+            counts.push(count);
+            count = 1;
+        } else if (i > 0) {
+            count++;
+        }
+    }
+    counts.push(count);
+    return counts;
+}
+
+export const getPrioritiesCount = (stories: Story[]): Array<number> => {
+    let allPriorities: Array<string> = [];
+    stories.forEach((story) => {
+        allPriorities.push(story.priority);
+    });
+    console.log('check = ', countPriorities(allPriorities));
+    return countPriorities(allPriorities);
+}
