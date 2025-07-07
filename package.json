@@ -4,11 +4,14 @@
   "description": "",
   "main": "index.js",
   "type": "module",
+  "homepage": "https://shashankac.github.io/PItool",
   "scripts": {
     "start": "webpack serve --config webpack.config.cjs",
     "build": "webpack --config webpack.config.cjs",
     "lint": "eslint 'src/**/*.{js,jsx,ts,tsx}'",
-    "lint:fix": "eslint 'src/**/*.{js,jsx,ts,tsx}' --fix"
+    "lint:fix": "eslint 'src/**/*.{js,jsx,ts,tsx}' --fix",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
   },
   "keywords": [],
   "author": "",
@@ -43,6 +46,7 @@
     "eslint-config-xo": "^0.46.0",
     "eslint-config-xo-typescript": "^7.0.0",
     "eslint-plugin-react": "^7.37.5",
+    "gh-pages": "^6.3.0",
     "globals": "^16.0.0",
     "html-webpack-plugin": "^5.6.3",
     "ts-loader": "^9.5.2",
