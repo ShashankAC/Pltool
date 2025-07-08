@@ -6,12 +6,12 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import Collapse from '@mui/material/Collapse';
-import { Add, ArrowDownward, Delete, Save } from '@mui/icons-material';
+import { Add, ArrowDownward, ArrowRight, Delete, Save } from '@mui/icons-material';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select'
-import { addSpecialitiesToStore, addSprintToStore, addStoryToStore, deleteHoliday, deleteSpecialityFromStore, deleteSprint, PiState, removeTeamMember, setEndDate, setHolidays, setHoursPerDay, setPiNumber, setStartDate, setTeamName, setTeamSize } from '../store/PiSlice';
+import { addSpecialitiesToStore, addSprintToStore, addStoryToStore, deleteHoliday, deleteSpecialityFromStore, deleteSprint, PiState, removeTeamMember, setEndDate, setHolidays, setHoursPerDay, setPiNumber, setStartDate, setTeamName } from '../store/PiSlice';
 import dayjs, { Dayjs } from "dayjs";
 import { Sprint, SprintAllocation, SprintType, TeamMember } from '../store/utils/types';
 import { useDispatch, useSelector } from 'react-redux';
@@ -59,12 +59,10 @@ function PiDetails() {
     const holidays = useSelector((state: PiState) => state.details.holidays);
     const hoursPerDay = useSelector((state: PiState) => state.details.hoursPerDay);
     const dispatch = useDispatch();
-    console.log('details = ', details);
   
     const addNewMember = () => {
         setAddTeamMembersError('');
-        console.log(memberName, memberSpecialities, plannedLeaves);
-        if (memberName && memberSpecialities?.length && plannedLeaves?.length) {
+        if (memberName && memberSpecialities?.length) {
             setMember({ id: `${Math.floor(1000 + Math.random() * 9000)}`, name: memberName, specialities: memberSpecialities, plannedLeaves: plannedLeaves});
         } else {
             setAddTeamMembersError('Add all details');
@@ -152,7 +150,7 @@ function PiDetails() {
     }, [holidays]);
 
     const handleAssigneeChange = (event: SelectChangeEvent<string>) => {
-        setStoryAssignee(details.teamMembers.find((member) => member.id === event.target.value)?.id  || '');
+        setStoryAssignee(teamMembers.find((member) => member.id === event.target.value)?.id  || '');
     }
 
     const handleSprintChange = (event: SelectChangeEvent<string>) => {
@@ -261,18 +259,6 @@ function PiDetails() {
                         }}
                     />
                 </Grid>
-                <Grid size={10}>
-                    <Typography>Team Size</Typography>
-                    <TextField
-                        id="team-size"
-                        fullWidth
-                        value={details.teamSize || ''}
-                        type='number'
-                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                            dispatch(setTeamSize(event.target.value));
-                        }}
-                    />
-                </Grid>
                 <Grid  size={10}>
                     <Typography>PI Start Date</Typography>
                     <DatePicker
@@ -333,7 +319,7 @@ function PiDetails() {
                         }}
                     />
                 </Grid>
-                <Grid  size={10}>
+                <Grid size={10}>
                     <Typography>Holidays</Typography>
                     <DatePicker
                         format='DD/MM/YYYY'
@@ -359,6 +345,9 @@ function PiDetails() {
                         )}
                     </Box>
                     <Button sx={{ margin: '5px' }} variant='contained' onClick={handleAddHolidays} endIcon={<AddIcon />}>Add</Button>
+                </Grid>
+                <Grid size={10}>
+                    <Button sx={{ margin: '5px' }} variant='contained' onClick={() => setTabValue(1)} endIcon={<ArrowRight />}>Next</Button>
                 </Grid>
                 </Grid>
             </CustomTabPanel>

@@ -50,7 +50,14 @@ const JsonEditor = ({ value, onChange }: { value: string; onChange: (v: string) 
   }
 }, [value]);
 
-  return <div style={{ margin: '10px', border: '2px solid blue' }} ref={editorRef} />;
+  return <div style={{
+    margin: '10px',
+    border: '2px solid blue',
+    height: "600px",       // ⬅️ Fixed height
+    overflow: "auto"
+    }} 
+    ref={editorRef} 
+  />;
 };
 
 export default JsonEditor;

@@ -7,9 +7,11 @@ import CodeMirror from '@uiw/react-codemirror';
 import { json } from "@codemirror/lang-json";
 import JsonEditor from "../components/JsonEditor";
 import { isValidJson } from "../store/utils/helpers";
+import { Save } from "@mui/icons-material";
 
 function SchemaPage() {
     const details = useSelector((state: PiState) => state.details);
+    const [localStore, setLocalStore] = useState({} as PiDetails);
     console.log('details = ', details);
     const [jsonValue, setJsonValue] = useState<string>(JSON.stringify(details));
     const [schemaError, setSchemaError] = useState<string>('');
@@ -19,22 +21,28 @@ function SchemaPage() {
     const handleJsonChange = (raw: string) => {
         if (!raw) {
             setJsonValue('');
-            dispatch(setPIdetails({} as PiDetails));
+            setLocalStore({} as PiDetails);
             setSchemaError('Invalid JSON schema');
         } else {
             const { isValid, parsed } = isValidJson(raw);
             setSchemaError(isValid ? '' : 'Invalid JSON schema');
             if (isValid && evaluateSchema(raw)) {
-                dispatch(setPIdetails(parsed));
+                setLocalStore(parsed);
                 setSchemaError('');
                 setSchemaSuccess('Success!');
                 setJsonValue(JSON.stringify(parsed, null, 2)); // Format on valid input
             } else {
-                dispatch(setPIdetails({} as PiDetails));
+                setLocalStore({} as PiDetails);
                 setSchemaError('Invalid PI schema');
             }
         }
     };
+
+    const handleSave = () => {
+        if (schemaSuccess === 'Success!' && localStore.teamName && localStore.PiStartDate) {
+            dispatch(setPIdetails(localStore));
+        }
+    }
 
     const handleFormatClick = () => {
         try {
@@ -71,14 +79,19 @@ function SchemaPage() {
     }
 
     return (
-        <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', flexDirection: 'column' }}>
+        <Box sx={{ width: '90%', display: 'flex', justifyContent: 'center', flexDirection: 'column', margin: '10px' }}>
             <Typography>Paste the schema below.</Typography>
             {schemaError ? <Alert severity="error" variant="standard">{schemaError}</Alert>: null}
             {schemaSuccess && !schemaError ? <Alert severity="success" variant="standard">{schemaSuccess}</Alert> : null}
             <JsonEditor value={jsonValue} onChange={handleJsonChange} />
-            <Button variant="contained" onClick={handleFormatClick} style={{ marginTop: "10px" ,width: '200px' }}>
-                Format JSON
-            </Button>
+            <Box sx={{ display: 'flex', justifyContent: 'left', alignItems: 'center' }}>
+                <Button variant="contained" onClick={handleFormatClick} style={{ margin: "10px", width: '200px' }}>
+                    Format JSON
+                </Button>
+                <Button variant="contained" onClick={handleSave} style={{ margin: "10px", width: '200px' }} endIcon={<Save/>}>
+                    Save
+                </Button>
+            </Box>
         </Box>
     );
 }

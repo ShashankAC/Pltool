@@ -125,8 +125,8 @@ function SprintsView() {
         <Chip sx={{ margin: '10px'}} label={`Number of stories: ${storiesInSprint.length}`} />
         <Chip sx={{ margin: '10px'}} label={`Number of working days: ${getNumberOfWorkingDays(dayjs(selectedSprint.start), dayjs(selectedSprint.end), holidays)}`} />
         <Chip sx={{ margin: '10px'}} label={`Number of holidays: ${getNumberOfHolidays(dayjs(selectedSprint.start), dayjs(selectedSprint.end), holidays)}`} />
-        <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center' }}>
-            <Card sx={{ maxHeight: '250px', minWidth: '340px', display: 'block', padding: '10px' }}>
+        <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center', flexWrap: 'wrap' }}>
+            <Card sx={{ height: '250px', width: '340px', display: 'block', padding: '10px', marginTop: '10px' }}>
                 <Typography sx={{textAlign: 'center'}} variant="h6" gutterBottom>Story points utilization</Typography>
                 <CardContent sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
                 <Gauge
@@ -139,7 +139,7 @@ function SprintsView() {
                 />
                 </CardContent>
             </Card>
-            <Card sx={{ minHeight: '250px', maxWidth: '340px', display: 'block', padding: '10px' }}>
+            <Card sx={{ height: '250px', width: '340px', display: 'block', padding: '10px', marginTop: '10px' }}>
                 <Typography sx={{textAlign: 'center'}} variant="h6" gutterBottom>Stories Type breakup</Typography>
                 <CardContent sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
                     <PieChart
@@ -159,7 +159,7 @@ function SprintsView() {
                     />
                 </CardContent>
             </Card>
-            <Card sx={{ minHeight: '250px', maxWidth: '340px', display: 'block', padding: '10px' }}>
+            <Card sx={{ height: '250px', width: '340px', display: 'block', padding: '10px', marginTop: '10px' }}>
                 <Typography sx={{textAlign: 'center'}} variant="h6" gutterBottom>Stories Priority breakup</Typography>
                 <CardContent sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
                         <BarChart
@@ -184,7 +184,7 @@ function SprintsView() {
                         />
                 </CardContent>
             </Card>
-            <Card sx={{ maxHeight: '250px', minWidth: '340px', display: 'block', padding: '10px' }}>
+            <Card sx={{ minHeight: '250px', minWidth: '340px', display: 'block', padding: '10px', marginTop: '10px' }}>
                 <Typography sx={{textAlign: 'center'}} variant="h6" gutterBottom>Members utilization</Typography>
                 <CardContent sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
                 <Gauge
@@ -199,7 +199,7 @@ function SprintsView() {
             </Card>
         </Box>
         <Typography variant="h5" gutterBottom>Stories</Typography>
-        <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'left' }}>
+        <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'left', marginTop: '10px' }}>
             <BarChart
                 sx={{
                     width: '40% !important',

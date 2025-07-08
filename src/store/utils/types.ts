@@ -41,7 +41,6 @@ export type Sprint = {
 export type PiDetails = {
     teamName: string;
     piNumber: string;
-    teamSize: string;
     PiStartDate: string;
     PiEndDate: string;
     hoursPerDay: string;

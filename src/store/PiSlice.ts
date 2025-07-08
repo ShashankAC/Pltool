@@ -11,7 +11,6 @@ const initialState: PiState = {
     details: {
         teamName: '',
         piNumber: '',
-        teamSize: '',
         holidays: [] as string[],
         teamMembers: [] as TeamMember[],
         sprints: [] as Sprint[],
@@ -40,9 +39,6 @@ export const PiSlice = createSlice({
         },
         setPiNumber: (state, action: PayloadAction<string>) => {
             state.details.piNumber = action.payload;
-        },
-        setTeamSize: (state, action: PayloadAction<string>) => {
-            state.details.teamSize = action.payload;
         },
         setStartDate: (state, action: PayloadAction<string>) => {
             state.details.PiStartDate = action.payload;
@@ -120,7 +116,6 @@ export const {
     setEndDate,
     setHoursPerDay,
     setHolidays,
-    setTeamSize,
     addSpecialitiesToStore,
     deleteSpecialityFromStore,
     addTeamMembers,
