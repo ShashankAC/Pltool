@@ -17,7 +17,7 @@ export function getTotalStoryPoints(stories: Story[], hoursPerDay: number): numb
     stories.forEach((story) => {
         count += parseFloat(story.estimatedDuration.days) + parseFloat(story.estimatedDuration.hours)/hoursPerDay;
     });
-    return count;
+    return Math.ceil(count);
 }
 
 export function getPossibleStoryPoints(startDate: Dayjs, endDate: Dayjs, holidays: Array<string>, members: TeamMember[]) {
@@ -25,7 +25,7 @@ export function getPossibleStoryPoints(startDate: Dayjs, endDate: Dayjs, holiday
     members.forEach((member) => {
         possibleStoryPoints += getNoOfWorkingDaysOfMember(startDate, endDate, member, holidays);
     });
-    return possibleStoryPoints;
+    return Math.floor(possibleStoryPoints);
 }
 
 export function getNoOfWorkingDays(startDate: Dayjs, endDate: Dayjs, holidays: Array<string>): number {
@@ -135,7 +135,7 @@ export function getMemberAvailableEffortInDays(startDate: Dayjs, endDate: Dayjs,
 }
 
 export function getStoriesInSprint(stories: Story[], sprint: Sprint): Story[] {
-    return stories.filter((story) => story.sprints.some((s) => s.name === sprint.name));
+    return stories.filter((story) => story.sprints.filter((s) => s.name === sprint.name))
 }
 
 function uniqueStringsArray(array: Array<string>): string[] {

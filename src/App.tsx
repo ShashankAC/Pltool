@@ -44,15 +44,15 @@ const NAVIGATION: Navigation = [
     title: 'Sprints',
     icon: <DirectionsRunIcon />,
   },
+  {
+    segment: 'teamMembers',
+    title: 'Team Members',
+    icon: <GroupsIcon />,
+  },
   // {
   //   segment: 'stories',
   //   title: 'Stories',
   //   icon: <AssignmentIcon />,
-  // },
-  // {
-  //   segment: 'teamMembers',
-  //   title: 'Team Members',
-  //   icon: <GroupsIcon />,
   // },
 ];
 
@@ -97,7 +97,7 @@ function App(): React.JSX.Element {
 });
 
   return(
-    <Box sx={{ minHeight: '100vh'}}>
+    <Box sx={{ minHeight: '100vh' }}>
       <AppProvider
         navigation={NAVIGATION}
         router={router}

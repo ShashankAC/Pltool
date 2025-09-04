@@ -57,18 +57,7 @@ function SchemaPage() {
     const evaluateSchema = (editorValue: string): boolean => {
         try {
             const schema = JSON.parse(editorValue);
-            if (schema?.teamName.length &&
-                schema?.piNumber.length &&
-                schema?.teamSize.length &&
-                typeof schema?.holidays === 'object' &&
-                schema?.teamMembers.length &&
-                schema.sprints.length &&
-                schema?.specialities.length &&
-                schema?.stories.length &&
-                schema?.PiStartDate &&
-                schema?.PiEndDate &&
-                schema?.hoursPerDay.length
-            ) {
+            if (schema) {
                 return true;
             }
         }

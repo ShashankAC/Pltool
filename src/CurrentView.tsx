@@ -5,6 +5,7 @@ import SchemaPage from "./pages/SchemaPage";
 import SprintsView from "./pages/SprintsView";
 import { useSelector } from "react-redux";
 import { PiDetails as PIDetails } from "./store/utils/types";
+import TeamMembersView from "./pages/TeamMembersView";
 
 function CurrentView({
     pathname,
@@ -28,6 +29,10 @@ function CurrentView({
         case '/sprintsView':
             if (data?.teamName && data?.PiStartDate && data?.PiEndDate && data?.sprints.length) {
                 return <SprintsView />
+            }
+        case '/teamMembers':
+            if(data?.teamMembers.length) {
+                return <TeamMembersView />
             }
         default:
             return <>404 or Invalid Schema</>

@@ -11,7 +11,7 @@ export type SprintAllocation = {
 export type Story = {
     storyId: string;
     priority: string;
-    type: 'BUG' | 'IMPROVEMENT' | 'FEATURE' | 'MAINTENANCE';
+    type: StoryType;
     title: string;
     description: string;
     estimatedDuration: TimeDuration;
@@ -20,6 +20,8 @@ export type Story = {
     Assignee: string;
     dependencies?: string[];
 }
+
+export type StoryType = 'BUG' | 'IMPROVEMENT' | 'FEATURE' | 'MAINTENANCE' | 'URGENT_RELEASE';
 
 export type TeamMember = {
     id: string;

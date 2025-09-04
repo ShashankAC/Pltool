@@ -22,6 +22,16 @@ function SprintsView() {
     const [selectedSprint, setSelectedSprint] = useState<Sprint>(sprints[0]);
     const [storiesInSprint, setStoriesInSprint] = useState(getStoriesInSprint(stories, selectedSprint));
     const [membersInSprint, setMembersInSprint] = useState(getMembersInSprint(storiesInSprint, members));
+    const [actualStoryPointsAvailable, setActualStoryPointsAvailable] = useState(0);
+    const [totalStoryPointsAvailable, setTotalStoryPointsAvailable] = useState(0);
+
+    useEffect(() => {
+        setActualStoryPointsAvailable(getTotalStoryPoints(storiesInSprint, parseFloat(hoursPerDay)));
+    }, [storiesInSprint, hoursPerDay]);
+
+    useEffect(() => {
+        setTotalStoryPointsAvailable(getPossibleStoryPoints(dayjs(selectedSprint.start), dayjs(selectedSprint.end), holidays, members));
+    }, [selectedSprint.start, selectedSprint.end, holidays, members]);
 
     useEffect(() => {
         setStoriesInSprint(getStoriesInSprint(stories, selectedSprint));
@@ -93,7 +103,7 @@ function SprintsView() {
         });
         return result;
     }
-
+    console.log('getTotalStoryPoints(storiesInSprint, parseFloat(hoursPerDay) = ', getTotalStoryPoints(storiesInSprint, parseFloat(hoursPerDay)));
     return (
     <Box sx={{ margin: '10px', width: '90%' }}>
         <Typography variant="h4" gutterBottom>Sprints</Typography>
@@ -132,12 +142,13 @@ function SprintsView() {
                 <Gauge
                     width={150}
                     height={150}
-                    value={getTotalStoryPoints(storiesInSprint, parseFloat(hoursPerDay))}
+                    value={actualStoryPointsAvailable}
                     valueMin={0}
-                    valueMax={getPossibleStoryPoints(dayjs(selectedSprint.start), dayjs(selectedSprint.end), holidays, members)}
+                    valueMax={totalStoryPointsAvailable}
                     text={({ value, valueMax }) => `${value} / ${valueMax}`}
                 />
                 </CardContent>
+                {actualStoryPointsAvailable > totalStoryPointsAvailable ? <Typography sx={{ color: 'red' }}>Sprint capacity exceeded</Typography> : null}
             </Card>
             <Card sx={{ height: '250px', width: '340px', display: 'block', padding: '10px', marginTop: '10px' }}>
                 <Typography sx={{textAlign: 'center'}} variant="h6" gutterBottom>Stories Type breakup</Typography>

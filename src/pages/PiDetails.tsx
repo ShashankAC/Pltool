@@ -13,7 +13,7 @@ import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select'
 import { addSpecialitiesToStore, addSprintToStore, addStoryToStore, deleteHoliday, deleteSpecialityFromStore, deleteSprint, PiState, removeTeamMember, setEndDate, setHolidays, setHoursPerDay, setPiNumber, setStartDate, setTeamName } from '../store/PiSlice';
 import dayjs, { Dayjs } from "dayjs";
-import { Sprint, SprintAllocation, SprintType, TeamMember } from '../store/utils/types';
+import { Sprint, SprintAllocation, SprintType, StoryType, TeamMember } from '../store/utils/types';
 import { useDispatch, useSelector } from 'react-redux';
 import { addTeamMembers } from '../store/PiSlice';
 import { CustomTabPanel, a11yProps } from '../components/CustomTabPanel';
@@ -34,11 +34,11 @@ function PiDetails() {
     const [addTeamMembersError, setAddTeamMembersError] = useState('');
     const [plannedLeaves, setPlannedLeaves] = useState<string[]>([]);
     const [storyId, setStoryId] = useState<string>();
-    const [storyType, setStoryType] = useState<'BUG' | 'IMPROVEMENT' | 'FEATURE'>('FEATURE');
+    const [storyType, setStoryType] = useState<StoryType | undefined>();
     const [storyPriority, setStoryPriority] = useState<string>('');
     const [storyTitle, setStoryTitle] = useState<string>('');
     const [sprintName, setSprintName] = useState<string>('');
-    const [sprintType, setSprintType] = useState<SprintType>('REGULAR');
+    const [sprintType, setSprintType] = useState<SprintType | undefined>();
     const [sprintSupportMembers, setSprintSupportMembers] = useState<string[]>([]);
     const [sprintStartDate, setSprintStartDate] = useState<Dayjs>();
     const [sprintEndDate, setSprintEndDate] = useState<Dayjs>();
@@ -53,7 +53,8 @@ function PiDetails() {
     const [holidaysError, setHolidaysError] = useState('');
     const [plannedLeavesError, setPlannedLeavesError] = useState('');
     const [sprintDateError, setSprintDateError] = useState('');
-
+    const [sprintError, setSprintError] = useState('');
+    const [storyAddError, setStoryAddError] = useState('');
     const details = useSelector((state: PiState) => state.details);
     const teamMembers = useSelector((state: PiState) => state.details.teamMembers);
     const holidays = useSelector((state: PiState) => state.details.holidays);
@@ -62,22 +63,26 @@ function PiDetails() {
   
     const addNewMember = () => {
         setAddTeamMembersError('');
+        console.log("memberName, memberSpecialities, memberSpecialities?.length", memberName, memberSpecialities, memberSpecialities?.length)
         if (memberName && memberSpecialities?.length) {
             setMember({ id: `${Math.floor(1000 + Math.random() * 9000)}`, name: memberName, specialities: memberSpecialities, plannedLeaves: plannedLeaves});
         } else {
             setAddTeamMembersError('Add all details');
         }
-        setOpenMembers(false);
         setMemberName('');
-        setMemberSpecialities([]);
+        setMemberSpecialities([])
+        setOpenMembers(false);
         setPlannedLeaves([]);
     }
 
     const addNewSprint = () => {
-        if (sprintName && sprintStartDate && sprintEndDate && sprintSupportMembers?.length) {
+        if (sprintName && sprintStartDate && sprintEndDate && sprintSupportMembers?.length && sprintType) {
             setSprint({ name: sprintName, start: sprintStartDate.toISOString(), end: sprintEndDate.toISOString(), supportMembers: sprintSupportMembers, type: sprintType});
+        } else {
+            setSprintError('Add all details');
         }
         setSprintName('');
+        setSprintType(undefined);
         setSprintStartDate(undefined);
         setSprintEndDate(undefined);
         setOpenSprints(false);
@@ -98,10 +103,24 @@ function PiDetails() {
 
     const addNewStory = () => {
         validateStoryDuration();
-        if (storyId && storyDescription && storySpecialities && sprintAllocations?.length && storyDurationDays && storyDurationHours) {
+        if (storyId && storyDescription && storySpecialities && sprintAllocations?.length && storyDurationDays && storyDurationHours && storyType) {
             dispatch(addStoryToStore({ storyId: storyId, title: storyTitle, description: storyDescription, priority: storyPriority, type: storyType, specialities: storySpecialities, sprints: sprintAllocations, estimatedDuration: { days: storyDurationDays, hours: storyDurationHours }, Assignee: storyAssignee, dependencies: storyDependencies }));
             setAddStory((prev) => !prev);
+        } else {
+            setStoryAddError('Add all details');
         }
+        setStoryId('');
+        setStoryTitle('');
+        setStoryDescription('');
+        setSprintAllocationDays('');
+        setSprintAllocationHours('');
+        setSprintAllocations([]);
+        setStoryPriority('');
+        setStorySpecialities([]);
+        setStoryType(undefined);
+        setStoryAssignee('');
+        setStoryDurationDays('');
+        setStoryDurationHours('');
     }
   
     useEffect(() => {
@@ -141,8 +160,8 @@ function PiDetails() {
         setTabValue(1);
     }
 
-    const handleStoryTypeChange = (event: SelectChangeEvent<'BUG' | 'IMPROVEMENT' | 'FEATURE'>) => {
-        setStoryType(event.target.value as 'BUG' | 'IMPROVEMENT' | 'FEATURE');
+    const handleStoryTypeChange = (event: SelectChangeEvent<StoryType>) => {
+        setStoryType(event.target.value as StoryType);
     }
 
     useEffect(() => {
@@ -371,7 +390,7 @@ function PiDetails() {
                                 <Select
                                     labelId="select-speciality"
                                     id="select-speciality"
-                                    value={memberSpecialities[memberSpecialities?.length - 1]}
+                                    value={memberSpecialities.length > 0 ? memberSpecialities[memberSpecialities?.length - 1] : ''}
                                     label="Speciality"
                                     onChange={handleMemberSpecialityChange}
                                 >
@@ -443,7 +462,7 @@ function PiDetails() {
                                 <TextField
                                     id="sprint-number"
                                     margin='normal'
-                                    value={storyId}
+                                    value={sprintName}
                                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                                         setSprintName(event.target.value);
                                     }}
@@ -453,7 +472,7 @@ function PiDetails() {
                                     <Select
                                         labelId="select-sprint"
                                         id="select-sprint"
-                                        value={sprintType}
+                                        value={sprintType || ''}
                                         label="Sprint"
                                         onChange={handleSprintTypeChange}
                                     >
@@ -466,13 +485,13 @@ function PiDetails() {
                                     <Select
                                         labelId="select-speciality"
                                         id="select-speciality"
-                                        value={sprintSupportMembers[sprintSupportMembers?.length - 1]}
+                                        value={sprintSupportMembers.length ? sprintSupportMembers[sprintSupportMembers?.length - 1] : ''}
                                         label="Speciality"
                                         onChange={handleSupportMemberChange}
                                     >
                                         {details.teamMembers?.map((member) => <MenuItem key={member.id} value={member.id}>{member.name}</MenuItem>)}
                                     </Select>
-                                    {sprintSupportMembers.map((member) => <Chip label={getMemberNameFromId(member, teamMembers)} onDelete={handleDeleteSupportMember}/>)}
+                                    {sprintSupportMembers.map((member) => <Chip label={getMemberNameFromId(member, teamMembers)} onDelete={() => handleDeleteSupportMember(member)}/>)}
                                 </FormControl>
                                 <Typography>Start Date</Typography>
                                 <DatePicker
@@ -505,6 +524,7 @@ function PiDetails() {
                                 />
                                 <Typography sx={{ color: 'red' }}>{sprintDateError}</Typography>
                                 <Button variant='contained' onClick={addNewSprint} endIcon={<Add />}>Add</Button>
+                                <Typography sx={{ color: 'red'}}>{sprintError}</Typography>
                             </Collapse>
                                 {details?.sprints?.map((sprint) => (
                                     <Accordion
@@ -574,11 +594,11 @@ function PiDetails() {
                                     <Select
                                         labelId="select-story-type-label"
                                         id="select-story-type"
-                                        value={storyType}
+                                        value={storyType || ''}
                                         label="assignee"
                                         onChange={handleStoryTypeChange}
                                     >
-                                        {['BUG', 'IMPROVEMENT', 'FEATURE', 'MAINTENANCE'].map((type) => <MenuItem key={type} value={type}>{type}</MenuItem>)}
+                                        {['BUG', 'IMPROVEMENT', 'FEATURE', 'MAINTENANCE', 'URGENT_RELEASE'].map((type) => <MenuItem key={type} value={type}>{type}</MenuItem>)}
                                     </Select>
                                 </FormControl>
                                 <FormControl sx={{ margin: '10px' }} fullWidth>
@@ -594,7 +614,7 @@ function PiDetails() {
                                     </Select>
                                 </FormControl>
                                 <FormControl sx={{ margin: '10px' }} fullWidth>
-                                    <InputLabel id="select-sprint">Select Sprints</InputLabel>
+                                    <InputLabel id="select-sprint">Add Sprint</InputLabel>
                                     <Select
                                         labelId="select-sprint-label"
                                         id="select-sprint"
@@ -628,13 +648,13 @@ function PiDetails() {
                                     </Box>
                                     <Button endIcon={<AddIcon/>} onClick={addSprintAllocation}>Add</Button>
                                 </FormControl>
-                                {sprintAllocations.map((sprint) => <Chip label={`${sprint.name} ${sprint.allocation.days}d` + ` ${sprint.allocation.hours ? `${sprint.allocation.hours}h` : ''}`} onDelete={() => handleDeleteStorySprint(sprint)} />)}
+                                {sprintAllocations.map((sprint) => parseFloat(sprint?.allocation?.days) > 0 ? <Chip label={`${sprint.name} ${sprint.allocation.days}d` + ` ${sprint.allocation.hours ? `${sprint.allocation.hours}h` : ''}`} onDelete={() => handleDeleteStorySprint(sprint)} /> : null)}
                                 <FormControl sx={{ margin: '10px' }} fullWidth>
                                     <InputLabel id="select-speciality">Select Speciality</InputLabel>
                                     <Select
                                         labelId="select-speciality"
                                         id="select-speciality"
-                                        value={storySpecialities[storySpecialities?.length - 1]}
+                                        value={storySpecialities[storySpecialities?.length - 1] || ''}
                                         label="assignee"
                                         onChange={handleStorySpecialityChange}
                                     >
@@ -644,7 +664,7 @@ function PiDetails() {
                                 <Box sx={{ margin: '10px' }}>
                                     <TextField
                                         id="story-duration-days"
-                                        label={<Typography>Total duration in days and hours</Typography>}
+                                        label={<Typography>Total duration of days</Typography>}
                                         margin='normal'
                                         placeholder='Days'
                                         type='number'
@@ -655,6 +675,7 @@ function PiDetails() {
                                     />
                                     <TextField
                                         id="story-duration-hours"
+                                        label={<Typography>Total duration of hours</Typography>}
                                         margin='normal'
                                         placeholder='Hours'
                                         type='number'
@@ -665,6 +686,7 @@ function PiDetails() {
                                     />
                                 </Box>
                                 <Button variant='contained' onClick={addNewStory} endIcon={<Save />}>Save</Button>
+                                <Typography sx={{ color: 'red' }}>{storyAddError}</Typography>
                             </Collapse>
                             {details?.stories?.map((story) => (
                                 <Accordion
