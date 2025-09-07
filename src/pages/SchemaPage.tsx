@@ -12,7 +12,6 @@ import { Save } from "@mui/icons-material";
 function SchemaPage() {
     const details = useSelector((state: PiState) => state.details);
     const [localStore, setLocalStore] = useState({} as PiDetails);
-    console.log('details = ', details);
     const [jsonValue, setJsonValue] = useState<string>(JSON.stringify(details));
     const [schemaError, setSchemaError] = useState<string>('');
     const [schemaSuccess, setSchemaSuccess] = useState<string>('');

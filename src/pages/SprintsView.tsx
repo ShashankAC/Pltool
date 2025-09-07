@@ -46,22 +46,32 @@ function SprintsView() {
                 {
                     id: 0,
                     value: 0,
-                    label: 'BUG'
+                    label: 'BUG',
+                    color: '#FA4F58'
                 },
                 {
                     id: 1,
                     value: 0,
-                    label: 'FEATURE'
+                    label: 'FEATURE',
+                    color: '#4254FB'
                 },
                 {
                     id: 2,
                     value: 0,
-                    label: 'IMPROVEMENT'
+                    label: 'IMPROVEMENT',
+                    color: '#FFB422'
                 },
                 {
                     id: 3,
                     value: 0,
-                    label: 'MAINTENANCE'
+                    label: 'MAINTENANCE',
+                    color: '#0DBEFF'
+                },
+                {
+                    id: 4,
+                    value: 0,
+                    label: 'URGENT RELEASE',
+                    color: '#22BF75'
                 },
     
             ];
@@ -75,12 +85,13 @@ function SprintsView() {
                         storiesBreakUpList[2].value += 1;
                     } else if (storiesInSprint[i].type === STORYTYPES.MAINTENANCE) {
                         storiesBreakUpList[3].value += 1;
+                    } else if (storiesInSprint[i].type === STORYTYPES.URGENT_RELEASE) {
+                        storiesBreakUpList[4].value += 1;
                     }
                 }
             }
         setStoriesBreakup(storiesBreakUpList);
     }, [storiesInSprint]);
-
     const handleSprintChange = (event: SelectChangeEvent) => {
         setSelectedSprintName(event.target.value);
     }
@@ -103,7 +114,6 @@ function SprintsView() {
         });
         return result;
     }
-    console.log('getTotalStoryPoints(storiesInSprint, parseFloat(hoursPerDay) = ', getTotalStoryPoints(storiesInSprint, parseFloat(hoursPerDay)));
     return (
     <Box sx={{ margin: '10px', width: '90%' }}>
         <Typography variant="h4" gutterBottom>Sprints</Typography>
@@ -130,11 +140,11 @@ function SprintsView() {
         >
             Sprint: {selectedSprint?.name}
         </Typography>
-        <Chip sx={{ margin: '10px'}} label={`Start Date: ${dayjs(selectedSprint.start).format('DD/MM/YYYY')}`} />
-        <Chip sx={{ margin: '10px'}} label={`End Date: ${dayjs(selectedSprint.end).format('DD/MM/YYYY')}`} />
-        <Chip sx={{ margin: '10px'}} label={`Number of stories: ${storiesInSprint.length}`} />
-        <Chip sx={{ margin: '10px'}} label={`Number of working days: ${getNumberOfWorkingDays(dayjs(selectedSprint.start), dayjs(selectedSprint.end), holidays)}`} />
-        <Chip sx={{ margin: '10px'}} label={`Number of holidays: ${getNumberOfHolidays(dayjs(selectedSprint.start), dayjs(selectedSprint.end), holidays)}`} />
+        <Chip sx={{ margin: '10px'}} label={`Start Date: ${dayjs(selectedSprint.start).format('DD/MM/YYYY')}`} onClick={() => {}} />
+        <Chip sx={{ margin: '10px'}} label={`End Date: ${dayjs(selectedSprint.end).format('DD/MM/YYYY')}`} onClick={() => {}} />
+        <Chip sx={{ margin: '10px'}} label={`Number of stories: ${storiesInSprint.length}`} onClick={() => {}} />
+        <Chip sx={{ margin: '10px'}} label={`Number of working days: ${getNumberOfWorkingDays(dayjs(selectedSprint.start), dayjs(selectedSprint.end), holidays)}`} onClick={() => {}} />
+        <Chip sx={{ margin: '10px'}} label={`Number of holidays: ${getNumberOfHolidays(dayjs(selectedSprint.start), dayjs(selectedSprint.end), holidays)}`} onClick={() => {}} />
         <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center', flexWrap: 'wrap' }}>
             <Card sx={{ height: '250px', width: '340px', display: 'block', padding: '10px', marginTop: '10px' }}>
                 <Typography sx={{textAlign: 'center'}} variant="h6" gutterBottom>Story points utilization</Typography>
@@ -157,8 +167,8 @@ function SprintsView() {
                         series={[
                             {
                                 data: storiesBreakUp,
-                                innerRadius: 20,
-                                outerRadius: 40,
+                                innerRadius: 5,
+                                outerRadius: 30,
                                 paddingAngle: 3,
                                 cornerRadius: 3,
                                 startAngle: 0,

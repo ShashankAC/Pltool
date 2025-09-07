@@ -64,7 +64,6 @@ function PiDetails() {
   
     const addNewMember = () => {
         setAddTeamMembersError('');
-        console.log("memberName, memberSpecialities, memberSpecialities?.length", memberName, memberSpecialities, memberSpecialities?.length)
         if (memberName && memberSpecialities?.length) {
             setMember({ id: `${Math.floor(1000 + Math.random() * 9000)}`, name: memberName, specialities: memberSpecialities, plannedLeaves: plannedLeaves});
         } else {

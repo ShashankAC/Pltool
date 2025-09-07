@@ -255,7 +255,6 @@ export const getPrioritiesInSprint = (stories: Story[]) => {
 function countPriorities(priorities: Array<string>): Array<number> {
     let count = 1;
     const counts = [];
-    console.log('priorities = ', priorities);
     for (let i = 0; i < priorities.length; i++) {
         if ( i > 0 && priorities[i] !== priorities[i-1]) {
             counts.push(count);
@@ -273,7 +272,6 @@ export const getPrioritiesCount = (stories: Story[]): Array<number> => {
     stories.forEach((story) => {
         allPriorities.push(story.priority);
     });
-    console.log('check = ', countPriorities(allPriorities));
     return countPriorities(allPriorities);
 }
 

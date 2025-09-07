@@ -20,7 +20,6 @@ const initialState: PiState = {
 }
 
 function removeHelper<T>(all: Array<T>, toBeRemoved: Array<T>) {
-    console.log('all = ', all, 'toBeRemoved = ', toBeRemoved);
      toBeRemoved.forEach(element => {
             const index = all.indexOf(element);
             if (index !== -1) {

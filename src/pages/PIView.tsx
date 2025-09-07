@@ -50,7 +50,7 @@ function PIView() {
             {
                 id: 4,
                 value: 0,
-                label: 'URGENT_RELEASE',
+                label: 'URGENT RELEASE',
                 color: '#22BF75'
 
             },
@@ -113,7 +113,7 @@ function PIView() {
                 for (let k = 0; k < Object.keys(STORYTYPES).length; k++) {
                     if (stories[j].type === Object.keys(STORYTYPES)[k] && stories[j].sprints.find((spr) => spr.name === sprints[i].name)) {
                         result[k].data[i] +=1;
-                        result[k] = {...result[k], datakey: Object.keys(STORYTYPES)[k], label: Object.keys(STORYTYPES)[k]}
+                        result[k] = {...result[k], datakey: Object.keys(STORYTYPES)[k], label: Object.keys(STORYTYPES)[k] !== 'URGENT_RELEASE' ? Object.keys(STORYTYPES)[k] : 'URGENT RELEASE' }
                     }
                 }
             }
