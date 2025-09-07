@@ -148,7 +148,7 @@ function SprintsView() {
                     text={({ value, valueMax }) => `${value} / ${valueMax}`}
                 />
                 </CardContent>
-                {actualStoryPointsAvailable > totalStoryPointsAvailable ? <Typography sx={{ color: 'red' }}>Sprint capacity exceeded</Typography> : null}
+                {actualStoryPointsAvailable > totalStoryPointsAvailable ? <Typography sx={{ textAlign: 'center', color: 'red' }}>Sprint capacity exceeded</Typography> : null}
             </Card>
             <Card sx={{ height: '250px', width: '340px', display: 'block', padding: '10px', marginTop: '10px' }}>
                 <Typography sx={{textAlign: 'center'}} variant="h6" gutterBottom>Stories Type breakup</Typography>
@@ -210,7 +210,7 @@ function SprintsView() {
             </Card>
         </Box>
         <Typography variant="h5" gutterBottom>Stories</Typography>
-        <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'left', marginTop: '10px' }}>
+        <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: '10px' }}>
             <BarChart
                 sx={{
                     width: '40% !important',
@@ -231,11 +231,11 @@ function SprintsView() {
                 }}
                 dataset={getStoryPointsOfMembersInSprint(storiesInSprint, membersInSprint, parseFloat(hoursPerDay))}
                 layout="horizontal"
-                yAxis={[{ data: membersInSprint.map((member) => member.name), label: 'Members', width: 140 }]}
+                yAxis={[{ data: membersInSprint.map((member) => member.name), label: 'Members', width: 100 }]}
                 xAxis={[{ label: 'Story points' }]}
                 series={[{ dataKey: 'storyPoints', label: 'Story points' }]}
                 height={400}
-                width={600}
+                width={500}
             />
         </Box>
         <Typography>Story-Member Relations</Typography>

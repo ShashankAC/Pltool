@@ -1,5 +1,5 @@
 import { PickerValue } from "@mui/x-date-pickers/internals";
-import { Sprint, Story, TeamMember, TimeDuration } from "./types";
+import { PiDetails, Sprint, Story, TeamMember, TimeDuration } from "./types";
 import dayjs, { Dayjs } from "dayjs";
 
 export function getNoOfWeekendDays(startDate: Dayjs, endDate: Dayjs): number {
@@ -135,7 +135,7 @@ export function getMemberAvailableEffortInDays(startDate: Dayjs, endDate: Dayjs,
 }
 
 export function getStoriesInSprint(stories: Story[], sprint: Sprint): Story[] {
-    return stories.filter((story) => story.sprints.filter((s) => s.name === sprint.name))
+    return stories.filter((story) => story.sprints.some((s) => s.name === sprint.name));
 }
 
 function uniqueStringsArray(array: Array<string>): string[] {
@@ -221,6 +221,7 @@ export function generateColors(n: number): string[] {
 }
 
 import Ajv from "ajv";
+import { useSelector } from "react-redux";
 
 const ajv = new Ajv();
 
@@ -274,4 +275,28 @@ export const getPrioritiesCount = (stories: Story[]): Array<number> => {
     });
     console.log('check = ', countPriorities(allPriorities));
     return countPriorities(allPriorities);
+}
+
+export const useGetMemberNameFromID = (id: string): string | undefined => {
+    const members = useSelector((state: {details : PiDetails}) => state.details.teamMembers);
+    return members.find((member) => member.id === id)?.name;
+}
+
+export const useGetMemberFromID = (id: string): TeamMember | undefined => {
+    const members = useSelector((state: {details : PiDetails}) => state.details.teamMembers);
+    return members.find((member) => member.id === id);
+}
+
+export const getRemainingDaysInSprintForMember = (id: string): number => {
+    const members = useSelector((state: {details : PiDetails}) => state.details.teamMembers);
+    const member = members.find((member) => member.id === id);
+    
+    return 0;
+}
+
+export const getRemainingHoursInSprintForMember = (id: string): number => {
+    const members = useSelector((state: {details : PiDetails}) => state.details.teamMembers);
+    const member = members.find((member) => member.id === id);
+
+    return 0;
 }

@@ -17,7 +17,7 @@ import { Sprint, SprintAllocation, SprintType, StoryType, TeamMember } from '../
 import { useDispatch, useSelector } from 'react-redux';
 import { addTeamMembers } from '../store/PiSlice';
 import { CustomTabPanel, a11yProps } from '../components/CustomTabPanel';
-import { getMemberNameFromId, getNoOfWorkingDays, isHoliday, isWeekend } from '../store/utils/helpers';
+import { getMemberNameFromId, getNoOfWorkingDays, isHoliday, isWeekend, useGetMemberFromID, useGetMemberNameFromID } from '../store/utils/helpers';
 
 function PiDetails() {
     const [member, setMember] = useState<TeamMember>();
@@ -59,6 +59,7 @@ function PiDetails() {
     const teamMembers = useSelector((state: PiState) => state.details.teamMembers);
     const holidays = useSelector((state: PiState) => state.details.holidays);
     const hoursPerDay = useSelector((state: PiState) => state.details.hoursPerDay);
+    const [showAllocatedSprints, setShowAllocatedSprints] = useState(false);
     const dispatch = useDispatch();
   
     const addNewMember = () => {
@@ -90,7 +91,7 @@ function PiDetails() {
     }
 
     const validateStoryDuration = () => {
-        if (storyDurationDays && storyDurationHours && sprintAllocationDays && sprintAllocationHours) {
+        if (storyDurationDays && storyDurationHours && parseInt(sprintAllocationDays) > -1 && parseInt(sprintAllocationHours) > -1) {
             let totalSprintAllocation = 0;
             sprintAllocations.forEach((a) => {
                 totalSprintAllocation = parseFloat(a.allocation.days) + parseFloat(a.allocation.hours)/parseFloat(hoursPerDay);
@@ -157,7 +158,6 @@ function PiDetails() {
 
     const handleAddHolidays = () => {
         dispatch(setHolidays(holidaysState));
-        setTabValue(1);
     }
 
     const handleStoryTypeChange = (event: SelectChangeEvent<StoryType>) => {
@@ -172,12 +172,16 @@ function PiDetails() {
         setStoryAssignee(teamMembers.find((member) => member.id === event.target.value)?.id  || '');
     }
 
-    const handleSprintChange = (event: SelectChangeEvent<string>) => {
+    const handleSprintAllocationChange = (event: SelectChangeEvent<string>) => {
         setSprintAllocations((prev) => [...prev, { name: event.target.value, allocation: { days: "0", hours: "0"}}]);
+        if (sprintAllocations.length === 0) {
+            setShowAllocatedSprints(false);
+        }
+
     }
 
     const addSprintAllocation = () => {
-        if (sprintAllocationDays && sprintAllocationHours) {
+        if (parseInt(sprintAllocationDays) > -1 && parseInt(sprintAllocationHours) > -1) {
             const currentSprintAllocation = sprintAllocations[sprintAllocations?.length - 1];
             const currentAllocations = [...sprintAllocations];
             currentAllocations.map((spAl) => {
@@ -187,6 +191,8 @@ function PiDetails() {
             }
             });
             setSprintAllocations(currentAllocations);
+            // dispatch(updateMemberSprintAllocation(useGetMemberFromID(storyAssignee) || {} as TeamMember));
+            setShowAllocatedSprints(true);
             setSprintAllocationDays('');
             setSprintAllocationHours('');
         } else {
@@ -321,7 +327,7 @@ function PiDetails() {
                     />
                     <Box sx={{ display: 'flex' }}>
                         {details.specialities?.map((speciality) => (
-                            <Chip key={speciality} label={speciality} onDelete={() => handleDeleteSpeciality(speciality)} />
+                            <Chip key={speciality} label={speciality} onClick={() => {}} onDelete={() => handleDeleteSpeciality(speciality)} />
                         ))}
                     </Box>
                     <Button sx={{ margin: '5px' }} variant='contained' onClick={handleSaveSpeciality} endIcon={<AddIcon />}>Add</Button>
@@ -360,10 +366,10 @@ function PiDetails() {
                     <Typography sx={{ color: 'red' }}>{holidaysError}</Typography>
                     <Box sx={{ display: 'flex' }}>
                         {holidaysState?.map((holiday) => 
-                            <Chip key={holiday} label={dayjs(holiday).format('DD/MM/YYYY')} onDelete={() => handleDeleteHolidays(holiday)} />
+                            <Chip key={holiday} label={dayjs(holiday).format('DD/MM/YYYY')} onClick={() => {}} onDelete={() => handleDeleteHolidays(holiday)} />
                         )}
                     </Box>
-                    <Button sx={{ margin: '5px' }} variant='contained' onClick={handleAddHolidays} endIcon={<AddIcon />}>Add</Button>
+                    <Button sx={{ margin: '5px' }} variant='contained' onClick={handleAddHolidays} endIcon={<AddIcon />}>Save holidays</Button>
                 </Grid>
                 <Grid size={10}>
                     <Button sx={{ margin: '5px' }} variant='contained' onClick={() => setTabValue(1)} endIcon={<ArrowRight />}>Next</Button>
@@ -420,7 +426,7 @@ function PiDetails() {
                             />
                             <Typography sx={{ color: 'red' }}>{plannedLeavesError}</Typography>
                             <Box sx={{ display: 'flex' }}>
-                                {plannedLeaves?.map((leave) => <Chip key={leave} label={dayjs(leave).format('DD/MM/YYYY')} onDelete={() => handleDeletePlannedLeave(leave)} />)}
+                                {plannedLeaves?.map((leave) => <Chip key={leave} label={dayjs(leave).format('DD/MM/YYYY')} onClick={() => {}} onDelete={() => handleDeletePlannedLeave(leave)} />)}
                             </Box>
                             <Button sx={{ margin: '5px' }} variant='contained' onClick={addNewMember}  endIcon={<AddIcon />}>Add Team Member</Button>
                         </Collapse>
@@ -491,7 +497,7 @@ function PiDetails() {
                                     >
                                         {details.teamMembers?.map((member) => <MenuItem key={member.id} value={member.id}>{member.name}</MenuItem>)}
                                     </Select>
-                                    {sprintSupportMembers.map((member) => <Chip label={getMemberNameFromId(member, teamMembers)} onDelete={() => handleDeleteSupportMember(member)}/>)}
+                                    {sprintSupportMembers.map((member) => <Chip label={getMemberNameFromId(member, teamMembers)} onClick={() => {}} onDelete={() => handleDeleteSupportMember(member)}/>)}
                                 </FormControl>
                                 <Typography>Start Date</Typography>
                                 <DatePicker
@@ -550,8 +556,8 @@ function PiDetails() {
                 </Grid>
             </CustomTabPanel>
             <CustomTabPanel value={tabValue} index={3}>
-                <Grid container spacing={1} direction="column" width="25%">
-                    <Grid  size={10}>
+                <Grid container spacing={1} direction="column" width="50%">
+                    <Grid  size={20}>
                         <>
                             <Typography>Add Story</Typography>
                             <Button startIcon={<AddIcon/>} onClick={() => setAddStory((prev) => !prev)}>Add Story</Button>
@@ -598,7 +604,7 @@ function PiDetails() {
                                         label="assignee"
                                         onChange={handleStoryTypeChange}
                                     >
-                                        {['BUG', 'IMPROVEMENT', 'FEATURE', 'MAINTENANCE', 'URGENT_RELEASE'].map((type) => <MenuItem key={type} value={type}>{type}</MenuItem>)}
+                                        {['BUG', 'IMPROVEMENT', 'FEATURE', 'MAINTENANCE', 'URGENT_RELEASE'].map((type) => <MenuItem key={type} value={type}>{type === 'URGENT_RELEASE' ? 'URGENT RELEASE' : type}</MenuItem>)}
                                     </Select>
                                 </FormControl>
                                 <FormControl sx={{ margin: '10px' }} fullWidth>
@@ -620,7 +626,7 @@ function PiDetails() {
                                         id="select-sprint"
                                         value={sprintAllocations[sprintAllocations?.length - 1]?.name || ''}
                                         label="assignee"
-                                        onChange={handleSprintChange}
+                                        onChange={handleSprintAllocationChange}
                                     >
                                         {details.sprints?.map((sprint) => <MenuItem key={sprint?.name} value={sprint?.name}>{sprint?.name}</MenuItem>)}
                                     </Select>
@@ -646,9 +652,9 @@ function PiDetails() {
                                             }}
                                         />
                                     </Box>
-                                    <Button endIcon={<AddIcon/>} onClick={addSprintAllocation}>Add</Button>
+                                    <Button variant='contained' endIcon={<AddIcon/>} onClick={addSprintAllocation}>Add</Button>
                                 </FormControl>
-                                {sprintAllocations.map((sprint) => parseFloat(sprint?.allocation?.days) > 0 ? <Chip label={`${sprint.name} ${sprint.allocation.days}d` + ` ${sprint.allocation.hours ? `${sprint.allocation.hours}h` : ''}`} onDelete={() => handleDeleteStorySprint(sprint)} /> : null)}
+                                {showAllocatedSprints && sprintAllocations.map((sprint) => parseFloat(sprint?.allocation?.days) > -1 ? <Chip label={`${sprint.name} ${sprint.allocation.days}d` + ` ${parseFloat(sprint.allocation.hours) > -1 ? `${sprint.allocation.hours}h` : ''}`} onClick={() => {}} onDelete={() => handleDeleteStorySprint(sprint)} /> : null)}
                                 <FormControl sx={{ margin: '10px' }} fullWidth>
                                     <InputLabel id="select-speciality">Select Speciality</InputLabel>
                                     <Select
@@ -689,17 +695,17 @@ function PiDetails() {
                                 <Typography sx={{ color: 'red' }}>{storyAddError}</Typography>
                             </Collapse>
                             {details?.stories?.map((story) => (
-                                <Accordion
-                                    key={story.storyId}
-                                >
+                                <Accordion>
                                     <AccordionSummary
+                                        key={story.storyId}
                                         expandIcon={<ArrowDownward />}
                                         aria-controls="panel1-content"
-                                        key={story.title}
                                     >
                                         <Typography component="span">{story.storyId}</Typography>
                                     </AccordionSummary>
                                     <AccordionDetails>
+                                        <Typography>Assignee: <b>{useGetMemberNameFromID(story.Assignee)}</b></Typography>
+                                        <Typography>Description: {story.description}</Typography>
                                         {story.estimatedDuration.days ? (
                                             <>
                                                 <Typography>Duration in Days</Typography>
@@ -714,9 +720,8 @@ function PiDetails() {
                                         ): null}
                                         <Typography>Starting Sprint</Typography>
                                         <Typography>{story.sprints.map((sprint) => sprint.name).join(',')}</Typography>
-                                        <Typography>Dependencies</Typography>
-                                        {story.dependencies?.map((dep) => <Chip label={dep}/> )}
-                                        <Typography>{story.Assignee}</Typography>
+                                        {story.dependencies?.length ? <Typography>Dependencies</Typography> : null}
+                                        {story.dependencies?.map((dep) => <Chip label={dep} onClick={() => {}}/> )}
                                     </AccordionDetails>
                                 </Accordion>
                             ))}

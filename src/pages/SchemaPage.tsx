@@ -41,6 +41,8 @@ function SchemaPage() {
     const handleSave = () => {
         if (schemaSuccess === 'Success!' && localStore.teamName && localStore.PiStartDate) {
             dispatch(setPIdetails(localStore));
+        } else {
+            dispatch(setPIdetails({} as PiDetails));
         }
     }
 

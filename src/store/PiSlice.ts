@@ -105,7 +105,7 @@ export const PiSlice = createSlice({
         },
         setPIdetails: (state, action: PayloadAction<PiDetails>) => {
             state.details = action.payload;
-        }
+        },
     }
 });
 
@@ -128,7 +128,7 @@ export const {
     addStoryToStore,
     setStories,
     deleteHoliday,
-    setPIdetails
+    setPIdetails,
 } = PiSlice.actions;
 
 export const getTeamDetails = (state: RootState) => state.details;

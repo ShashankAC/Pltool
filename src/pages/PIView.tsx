@@ -26,22 +26,33 @@ function PIView() {
             {
                 id: 0,
                 value: 0,
-                label: 'BUG'
+                label: 'BUG',
+                color: '#FA4F58',
             },
             {
                 id: 1,
                 value: 0,
-                label: 'FEATURE'
+                label: 'FEATURE',
+                color: '#4254FB',
             },
             {
                 id: 2,
                 value: 0,
-                label: 'IMPROVEMENT'
+                label: 'IMPROVEMENT',
+                color: '#FFB422',
             },
             {
                 id: 3,
                 value: 0,
-                label: 'MAINTENANCE'
+                label: 'MAINTENANCE',
+                color: '#0DBEFF'
+            },
+            {
+                id: 4,
+                value: 0,
+                label: 'URGENT_RELEASE',
+                color: '#22BF75'
+
             },
         ];
         if (stories.length) {
@@ -54,6 +65,8 @@ function PIView() {
                     storiesBreakUpList[2].value += 1;
                 } else if (stories[i].type === STORYTYPES.MAINTENANCE) {
                     storiesBreakUpList[3].value += 1;
+                } else if (stories[i].type === "URGENT_RELEASE") {
+                    storiesBreakUpList[4].value += 1;
                 }
             }
         }
@@ -66,12 +79,29 @@ function PIView() {
 
     useEffect(() => {
         setTotalStoryPoints(getTotalStoryPoints(stories, parseFloat(hoursPerDay)))
-    }, [stories, hoursPerDay])
+    }, [stories, hoursPerDay]);
+
+    const getLegendColor = (storyType: string): string => {
+        switch (storyType) {
+            case 'BUG':
+                return '#FA4F58';
+            case 'FEATURE':
+                return '#4254FB';
+            case 'IMPROVEMENT':
+                return '#FFB422';
+            case 'MAINTENANCE':
+                return '#0DBEFF';
+            case 'URGENT_RELEASE':
+                return '#22BF75';
+            default:
+                return '#000';
+        }    
+    }
 
     const prepareSprintwiseStorytypeBreakup = (stories: Story[], sprints: Sprint[]) => {
-        const result: {data: Array<number>, datakey: string, label: string}[] = [];
+        const result: {data: Array<number>, datakey: string, label: string, color: string}[] = [];
         for (let i = 0; i < Object.keys(STORYTYPES).length; i++) {
-            result.push({data: [], datakey: '', label: ''});
+            result.push({data: [], datakey: '', label: '', color: getLegendColor(Object.keys(STORYTYPES)[i])});
         }
         result.forEach((r) => {
             for (let i = 0; i < Object.keys(STORYTYPES).length; i++) {
@@ -88,7 +118,6 @@ function PIView() {
                 }
             }
         }
-        console.log('result = ', result);
         return result;
     }
 
@@ -98,15 +127,15 @@ function PIView() {
                 PI Overview
             </Typography>
             <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap'}}>
-                <Chip sx={{ margin: '10px'}} label={`Start date: ${dayjs(startDate).format('DD/MM/YYYY')}`} />
-                <Chip sx={{ margin: '10px'}} label={`End date: ${dayjs(endDate).format('DD/MM/YYYY')}`} />
-                <Chip sx={{ margin: '10px'}} label={`Team size: ${teamMembers?.length || 0}`} />
-                <Chip sx={{ margin: '10px'}} label={`Number of stories: ${stories?.length || 0}`} />
-                <Chip sx={{ margin: '10px'}} label={`Working hours per day: ${hoursPerDay || 0}`} />
-                <Chip sx={{ margin: '10px'}} label={`Number of working days: ${getNoOfWorkingDays(dayjs(startDate), dayjs(endDate), holidays)}`} />
-                <Chip sx={{ margin: '10px'}} label={`Number of holidays: ${getNumberOfHolidays(dayjs(startDate), dayjs(endDate), holidays)}`} />
-                <Chip sx={{ margin: '10px'}} label={`Story points required: ${totalStoryPoints}`} />
-                <Chip sx={{ margin: '10px'}} label={`Story points capacity: ${possibleStoryPoints}`}/>
+                <Chip sx={{ margin: '10px'}} label={`Start date: ${dayjs(startDate).format('DD/MM/YYYY')}`} onClick={() => {}} />
+                <Chip sx={{ margin: '10px'}} label={`End date: ${dayjs(endDate).format('DD/MM/YYYY')}`} onClick={() => {}} />
+                <Chip sx={{ margin: '10px'}} label={`Team size: ${teamMembers?.length || 0}`} onClick={() => {}} />
+                <Chip sx={{ margin: '10px'}} label={`Number of stories: ${stories?.length || 0}`} onClick={() => {}} />
+                <Chip sx={{ margin: '10px'}} label={`Working hours per day: ${hoursPerDay || 0}`}  onClick={() => {}} />
+                <Chip sx={{ margin: '10px'}} label={`Number of working days: ${getNoOfWorkingDays(dayjs(startDate), dayjs(endDate), holidays)}`} onClick={() => {}} />
+                <Chip sx={{ margin: '10px'}} label={`Number of holidays: ${getNumberOfHolidays(dayjs(startDate), dayjs(endDate), holidays)}`} onClick={() => {}} />
+                <Chip sx={{ margin: '10px'}} label={`Story points required: ${totalStoryPoints}`} onClick={() => {}} />
+                <Chip sx={{ margin: '10px'}} label={`Story points capacity: ${possibleStoryPoints}`} onClick={() => {}} />
             </Box>
             {totalStoryPoints > possibleStoryPoints ? (
                 <Alert severity="warning" variant="filled"> Story points capacity exceeded. One or more team members maybe overloaded.</Alert>
