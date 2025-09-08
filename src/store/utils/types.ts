@@ -8,6 +8,12 @@ export type SprintAllocation = {
     allocation: TimeDuration;
 }
 
+export type SprintAvailability = {
+    name: string;
+    days: string;
+    hours: string;
+}
+
 export type Story = {
     storyId: string;
     priority: string;
@@ -28,6 +34,7 @@ export type TeamMember = {
     name: string;
     specialities: string[];
     plannedLeaves: string[];
+    availabilityInSprints?: SprintAvailability[];
 }
 
 export type SprintType = 'REGULAR' | 'STRETCH';

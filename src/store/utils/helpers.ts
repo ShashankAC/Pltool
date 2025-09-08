@@ -1,3 +1,34 @@
+// Returns available days and hours for a member in a sprint, considering holidays, weekends, and planned leaves
+export function getMemberAvailableEffortInSprint(sprint: { start: string, end: string }, member: TeamMember, holidays: string[], hoursPerDay: string | number): { days: number, hours: number } {
+    const start = dayjs(sprint.start);
+    const end = dayjs(sprint.end);
+    let availableEffort = 0;
+    for (let i = start; i.isBefore(end.add(1, 'day')); i = i.add(1, 'day')) {
+        if (!isPlannedLeave(member, i) && !isHoliday(i, holidays) && !isWeekend(i)) {
+            availableEffort++;
+        }
+    }
+    const hoursPerDayNum = parseFloat(hoursPerDay as string) || 8;
+    const totalHours = availableEffort * hoursPerDayNum;
+    const availDays = Math.floor(totalHours / hoursPerDayNum);
+    const availHours = totalHours % hoursPerDayNum;
+    return { days: availDays, hours: availHours };
+}
+// Returns { days: number, hours: number } as the sum of all sprint allocations
+export function getTotalSprintAllocation(sprintAllocations: { allocation: { days: string, hours: string } }[]): { days: number, hours: number } {
+    let totalDays = 0;
+    let totalHours = 0;
+    sprintAllocations.forEach((sprint) => {
+        totalDays += parseInt(sprint.allocation.days) || 0;
+        totalHours += parseInt(sprint.allocation.hours) || 0;
+    });
+    // Convert hours to days if >= 24
+    if (totalHours >= 24) {
+        totalDays += Math.floor(totalHours / 24);
+        totalHours = totalHours % 24;
+    }
+    return { days: totalDays, hours: totalHours };
+}
 import { PickerValue } from "@mui/x-date-pickers/internals";
 import { PiDetails, Sprint, Story, TeamMember, TimeDuration } from "./types";
 import dayjs, { Dayjs } from "dayjs";
@@ -297,4 +328,8 @@ export const getRemainingHoursInSprintForMember = (id: string): number => {
     const member = members.find((member) => member.id === id);
 
     return 0;
+}
+
+export const calculateMemberAvailabilityForSprint = (memberId: string, sprintName: string): string => {
+    return '1';
 }

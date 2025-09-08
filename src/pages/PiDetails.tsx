@@ -17,7 +17,9 @@ import { Sprint, SprintAllocation, SprintType, StoryType, TeamMember } from '../
 import { useDispatch, useSelector } from 'react-redux';
 import { addTeamMembers } from '../store/PiSlice';
 import { CustomTabPanel, a11yProps } from '../components/CustomTabPanel';
-import { getMemberNameFromId, getNoOfWorkingDays, isHoliday, isWeekend, useGetMemberFromID, useGetMemberNameFromID } from '../store/utils/helpers';
+import { calculateMemberAvailabilityForSprint, getMemberAvailableEffortInDays, getMemberNameFromId, getNoOfWorkingDays, isHoliday, isWeekend, useGetMemberFromID, useGetMemberNameFromID } from '../store/utils/helpers';
+import { getTotalSprintAllocation } from '../store/utils/helpers';
+import { getMemberAvailableEffortInSprint } from '../store/utils/helpers';
 
 function PiDetails() {
     const [member, setMember] = useState<TeamMember>();
@@ -172,30 +174,31 @@ function PiDetails() {
     }
 
     const handleSprintAllocationChange = (event: SelectChangeEvent<string>) => {
-        setSprintAllocations((prev) => [...prev, { name: event.target.value, allocation: { days: "0", hours: "0"}}]);
-        if (sprintAllocations.length === 0) {
-            setShowAllocatedSprints(false);
-        }
-
+        // Only update the selected sprint name for allocation, don't add to allocations yet
+        setSprintName(event.target.value);
     }
 
     const addSprintAllocation = () => {
-        if (parseInt(sprintAllocationDays) > -1 && parseInt(sprintAllocationHours) > -1) {
-            const currentSprintAllocation = sprintAllocations[sprintAllocations?.length - 1];
-            const currentAllocations = [...sprintAllocations];
-            currentAllocations.map((spAl) => {
-            if (spAl.name === currentSprintAllocation.name) {
-                spAl.allocation.days = sprintAllocationDays;
-                spAl.allocation.hours = sprintAllocationHours;
-            }
-            });
-            setSprintAllocations(currentAllocations);
-            // dispatch(updateMemberSprintAllocation(useGetMemberFromID(storyAssignee) || {} as TeamMember));
+        // Only add if both days and hours are entered and a sprint is selected
+        if (
+            sprintName &&
+            (parseInt(sprintAllocationDays) > 0 || parseInt(sprintAllocationHours) > 0)
+        ) {
+            setSprintAllocations((prev) => [
+                ...prev,
+                {
+                    name: sprintName,
+                    allocation: {
+                        days: sprintAllocationDays,
+                        hours: sprintAllocationHours,
+                    },
+                },
+            ]);
             setShowAllocatedSprints(true);
             setSprintAllocationDays('');
             setSprintAllocationHours('');
-        } else {
-            // setSprintAllocationError('Need to estimate duration of the story in the sprint.');
+            // Do NOT clear sprintName here, so the remaining days/hours display persists
+            // setSprintName('');
         }
     }
 
@@ -556,144 +559,178 @@ function PiDetails() {
             </CustomTabPanel>
             <CustomTabPanel value={tabValue} index={3}>
                 <Grid container spacing={1} direction="column" width="50%">
-                    <Grid  size={20}>
+                    <Grid size={20}>
                         <>
                             <Typography>Add Story</Typography>
-                            <Button startIcon={<AddIcon/>} onClick={() => setAddStory((prev) => !prev)}>Add Story</Button>
+                            <Button
+                                variant='contained'
+                                endIcon={addStory ? <ArrowDownward /> : <ArrowRight />}
+                                sx={{ margin: "10px 10px 10px 0px" }}
+                                onClick={() => setAddStory((prev) => !prev)}
+                            >
+                                Add Story
+                            </Button>
                             <Collapse in={addStory}>
-                                <TextField
-                                    id="story-id"
-                                    placeholder='Story ID'
-                                    value={storyId}
-                                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                                        setStoryId(event.target.value);
-                                    }}
-                                />
-                                <TextField
-                                    id="story-title"
-                                    placeholder='Story Title'
-                                    value={storyTitle}
-                                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                                        setStoryTitle(event.target.value);
-                                    }}
-                                />
-                                <TextField
-                                    id="story-description"
-                                    placeholder='Description'
-                                    value={storyDescription}
-                                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                                        setStoryDescription(event.target.value);
-                                    }}
-                                />
-                                <TextField
-                                    id="story-priority"
-                                    placeholder='Priority'
-                                    type='number'
-                                    value={storyPriority}
-                                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                                        setStoryPriority(event.target.value);
-                                    }}
-                                />
-                                <FormControl sx={{ margin: '10px' }} fullWidth>
-                                    <InputLabel id="select-type">Select Type</InputLabel>
-                                    <Select
-                                        labelId="select-story-type-label"
-                                        id="select-story-type"
-                                        value={storyType || ''}
-                                        label="assignee"
-                                        onChange={handleStoryTypeChange}
-                                    >
-                                        {['BUG', 'IMPROVEMENT', 'FEATURE', 'MAINTENANCE', 'URGENT_RELEASE'].map((type) => <MenuItem key={type} value={type}>{type === 'URGENT_RELEASE' ? 'URGENT RELEASE' : type}</MenuItem>)}
-                                    </Select>
-                                </FormControl>
-                                <FormControl sx={{ margin: '10px' }} fullWidth>
-                                    <InputLabel id="select-assignee">Select Assignee</InputLabel>
-                                    <Select
-                                        labelId="select-assignee-label"
-                                        id="select-member-assignee"
-                                        value={storyAssignee}
-                                        label="assignee"
-                                        onChange={handleAssigneeChange}
-                                    >
-                                        {details.teamMembers?.map((member) => <MenuItem key={member.id} value={member.id}>{member?.name}</MenuItem>)}
-                                    </Select>
-                                </FormControl>
-                                <FormControl sx={{ margin: '10px' }} fullWidth>
-                                    <InputLabel id="select-sprint">Add Sprint</InputLabel>
-                                    <Select
-                                        labelId="select-sprint-label"
-                                        id="select-sprint"
-                                        value={sprintAllocations[sprintAllocations?.length - 1]?.name || ''}
-                                        label="assignee"
-                                        onChange={handleSprintAllocationChange}
-                                    >
-                                        {details.sprints?.map((sprint) => <MenuItem key={sprint?.name} value={sprint?.name}>{sprint?.name}</MenuItem>)}
-                                    </Select>
-                                    <Box display="flex" margin="10px" justifyContent="space-evenly">
-                                        <TextField
-                                            id="sprint-allocation-days"
-                                            placeholder='Days'
-                                            value={sprintAllocationDays}
-                                            type='number'
-                                            required
-                                            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                                                setSprintAllocationDays(event.target.value);
-                                            }}
-                                        />
-                                        <TextField
-                                            id="sprint-allocation-hours"
-                                            placeholder='Hours'
-                                            value={sprintAllocationHours}
-                                            type='number'
-                                            required
-                                            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                                                setSprintAllocationHours(event.target.value);
-                                            }}
-                                        />
-                                    </Box>
-                                    <Button variant='contained' endIcon={<AddIcon/>} onClick={addSprintAllocation}>Add</Button>
-                                </FormControl>
-                                {showAllocatedSprints && sprintAllocations.map((sprint) => parseFloat(sprint?.allocation?.days) > -1 ? <Chip label={`${sprint.name} ${sprint.allocation.days}d` + ` ${parseFloat(sprint.allocation.hours) > -1 ? `${sprint.allocation.hours}h` : ''}`} onClick={() => {}} onDelete={() => handleDeleteStorySprint(sprint)} /> : null)}
-                                <FormControl sx={{ margin: '10px' }} fullWidth>
-                                    <InputLabel id="select-speciality">Select Speciality</InputLabel>
-                                    <Select
-                                        labelId="select-speciality"
-                                        id="select-speciality"
-                                        value={storySpecialities[storySpecialities?.length - 1] || ''}
-                                        label="assignee"
-                                        onChange={handleStorySpecialityChange}
-                                    >
-                                        {details.specialities?.map((speciality) => <MenuItem key={speciality} value={speciality}>{speciality}</MenuItem>)}
-                                    </Select>
-                                </FormControl>
-                                <Box sx={{ margin: '10px' }}>
+                                <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "left", width: '50%' }}>
                                     <TextField
-                                        id="story-duration-days"
-                                        label={<Typography>Total duration of days</Typography>}
-                                        margin='normal'
-                                        placeholder='Days'
-                                        type='number'
-                                        value={storyDurationDays}
+                                        id="story-id"
+                                        sx={{ marginBottom: '10px' }}
+                                        placeholder='Story ID'
+                                        value={storyId}
                                         onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                                            setStoryDurationDays(event.target.value);
+                                            setStoryId(event.target.value);
                                         }}
                                     />
                                     <TextField
-                                        id="story-duration-hours"
-                                        label={<Typography>Total duration of hours</Typography>}
-                                        margin='normal'
-                                        placeholder='Hours'
-                                        type='number'
-                                        value={storyDurationHours}
+                                        id="story-title"
+                                        sx={{ marginBottom: '10px' }}
+                                        placeholder='Story Title'
+                                        value={storyTitle}
                                         onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                                            setStoryDurationHours(event.target.value);
+                                            setStoryTitle(event.target.value);
+                                        }}
+                                    />
+                                    <TextField
+                                        id="story-description"
+                                        sx={{ marginBottom: '10px' }}
+                                        placeholder='Description'
+                                        value={storyDescription}
+                                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                            setStoryDescription(event.target.value);
+                                        }}
+                                    />
+                                    <TextField
+                                        id="story-priority"
+                                        sx={{ marginBottom: '10px' }}
+                                        placeholder='Priority'
+                                        type='number'
+                                        value={storyPriority}
+                                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                            setStoryPriority(event.target.value);
                                         }}
                                     />
                                 </Box>
-                                <Button variant='contained' onClick={addNewStory} endIcon={<Save />}>Save</Button>
+                                <Box sx={{ width: '50%' }}>
+                                    <FormControl sx={{ margin: '10px 10px 10px 0px' }} fullWidth>
+                                        <InputLabel id="select-type">Select Type</InputLabel>
+                                        <Select
+                                            labelId="select-story-type-label"
+                                            id="select-story-type"
+                                            value={storyType || ''}
+                                            label="assignee"
+                                            onChange={handleStoryTypeChange}
+                                        >
+                                            {['BUG', 'IMPROVEMENT', 'FEATURE', 'MAINTENANCE', 'URGENT_RELEASE'].map((type) => <MenuItem key={type} value={type}>{type === 'URGENT_RELEASE' ? 'URGENT RELEASE' : type}</MenuItem>)}
+                                        </Select>
+                                    </FormControl>
+                                    <FormControl sx={{ margin: '10px 10px 10px 0px' }} fullWidth>
+                                        <InputLabel id="select-assignee">Select Assignee</InputLabel>
+                                        <Select
+                                            labelId="select-assignee-label"
+                                            id="select-member-assignee"
+                                            value={storyAssignee}
+                                            label="assignee"
+                                            onChange={handleAssigneeChange}
+                                        >
+                                            {details.teamMembers?.map((member) => <MenuItem key={member.id} value={member.id}>{member?.name}</MenuItem>)}
+                                        </Select>
+                                    </FormControl>
+                                    <FormControl sx={{ margin: '10px 10px 10px 0px' }} fullWidth>
+                                        <InputLabel id="select-sprint">Add Sprint</InputLabel>
+                                        <Select
+                                            labelId="select-sprint-label"
+                                            id="select-sprint"
+                                            value={sprintName}
+                                            label="assignee"
+                                            onChange={handleSprintAllocationChange}
+                                        >
+                                            {details.sprints?.map((sprint) => <MenuItem key={sprint?.name} value={sprint?.name}>{sprint?.name}</MenuItem>)}
+                                        </Select>
+                                        {/* Show remaining available days/hours for selected member in selected sprint after allocations */}
+                                        {(() => {
+                                            const selectedSprintName = sprintName;
+                                            const selectedSprint = details.sprints?.find(s => s.name === selectedSprintName);
+                                            const assignee = teamMembers.find(m => m.id === storyAssignee);
+                                            if (selectedSprint && assignee) {
+                                                // Total available effort for this member in this sprint
+                                                const avail = getMemberAvailableEffortInSprint(selectedSprint, assignee, holidays, hoursPerDay);
+                                                // Sum allocations for this member in this sprint
+                                                let allocatedHours = 0;
+                                                sprintAllocations.forEach(sa => {
+                                                    if (sa.name === selectedSprint.name && storyAssignee) {
+                                                        allocatedHours += (parseInt(sa.allocation.days) || 0) * (parseFloat(hoursPerDay) || 8);
+                                                        allocatedHours += (parseInt(sa.allocation.hours) || 0);
+                                                    }
+                                                });
+                                                const totalAvailHours = avail.days * (parseFloat(hoursPerDay) || 8) + avail.hours;
+                                                let remainingHours = totalAvailHours - allocatedHours;
+                                                remainingHours = Math.max(0, remainingHours);
+                                                const remainingDays = Math.floor(remainingHours / (parseFloat(hoursPerDay) || 8));
+                                                const remainingHrs = remainingHours % (parseFloat(hoursPerDay) || 8);
+                                                return (
+                                                    <Typography sx={{ mt: 1, fontWeight: 500, color: 'green' }}>
+                                                        Remaining for {assignee.name} in this sprint: {remainingDays} days {remainingHrs} hours
+                                                    </Typography>
+                                                );
+                                            }
+                                            return null;
+                                        })()}
+                                        <Box sx={{ display: "flex", flexDirection: "column", justifyContent: 'left', margin: '10px 10px 10px 0px',  width: '50%' }}>
+                                            <Box display="flex" justifyContent="left">
+                                                <TextField
+                                                    id="sprint-allocation-days"
+                                                    placeholder='Days'
+                                                    value={sprintAllocationDays}
+                                                    type='number'
+                                                    required
+                                                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                                        setSprintAllocationDays(event.target.value);
+                                                    }}
+                                                />
+                                                <TextField
+                                                    id="sprint-allocation-hours"
+                                                    placeholder='Hours'
+                                                    value={sprintAllocationHours}
+                                                    type='number'
+                                                    required
+                                                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                                        setSprintAllocationHours(event.target.value);
+                                                    }}
+                                                />
+                                            </Box>
+                                            <Button variant='contained' sx={{ width: '250px', marginTop: '10px' }} onClick={addSprintAllocation}>Add Sprint Effort</Button>
+                                        </Box>
+                                    </FormControl>
+                                    {showAllocatedSprints && sprintAllocations.map((sprint) => (
+                                        (parseInt(sprint.allocation.days) > 0 || parseInt(sprint.allocation.hours) > 0) ? (
+                                            <Chip label={`${sprint.name} ${sprint.allocation.days}d ${sprint.allocation.hours}h`} onClick={() => {}} onDelete={() => handleDeleteStorySprint(sprint)} />
+                                        ) : null
+                                    ))}
+                                    <Box sx={{ display: "flex", flexDirection: 'column', justifyContent: 'left', margin: '10px 0px 10px 0px' }}>
+                                        <Typography sx={{ mt: 1, fontWeight: 500 }}>
+                                            Total duration: {(() => {
+                                                const total = getTotalSprintAllocation(sprintAllocations);
+                                                return `${total.days} days ${total.hours} hours`;
+                                            })()}
+                                        </Typography>
+                                    </Box>
+                                    <FormControl sx={{ margin: '10px 10px 10px 0px' }} fullWidth>
+                                        <InputLabel id="select-speciality">Select Speciality</InputLabel>
+                                        <Select
+                                            labelId="select-speciality"
+                                            id="select-speciality"
+                                            value={storySpecialities[storySpecialities?.length - 1] || ''}
+                                            label="assignee"
+                                            onChange={handleStorySpecialityChange}
+                                        >
+                                            {details.specialities?.map((speciality) => <MenuItem key={speciality} value={speciality}>{speciality}</MenuItem>)}
+                                        </Select>
+                                    </FormControl>
+                                </Box>
+                                <Button variant='contained' sx={{ marginBottom: '10px' }} onClick={addNewStory} endIcon={<Save />}>Save</Button>
                                 <Typography sx={{ color: 'red' }}>{storyAddError}</Typography>
                             </Collapse>
-                            {details?.stories?.map((story) => (
+                            {!addStory && details?.stories?.map((story) => (
                                 <Accordion>
                                     <AccordionSummary
                                         key={story.storyId}
@@ -703,7 +740,7 @@ function PiDetails() {
                                         <Typography component="span">{story.storyId}</Typography>
                                     </AccordionSummary>
                                     <AccordionDetails>
-                                        <Typography>Assignee: <b>{useGetMemberNameFromID(story.Assignee)}</b></Typography>
+                                        <Typography>Assignee: <b>{getMemberNameFromId(story.Assignee, details.teamMembers)}</b></Typography>
                                         <Typography>Description: {story.description}</Typography>
                                         {story.estimatedDuration.days ? (
                                             <>
