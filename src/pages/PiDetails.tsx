@@ -654,7 +654,7 @@ function PiDetails() {
                                             if (selectedSprint && assignee) {
                                                 // Total available effort for this member in this sprint
                                                 const avail = getMemberAvailableEffortInSprint(selectedSprint, assignee, holidays, hoursPerDay);
-                                                // Sum allocations for this member in this sprint
+                                                // Sum allocations for this member in this sprint from current UI session
                                                 let allocatedHours = 0;
                                                 sprintAllocations.forEach(sa => {
                                                     if (sa.name === selectedSprint.name && storyAssignee) {
@@ -662,44 +662,70 @@ function PiDetails() {
                                                         allocatedHours += (parseInt(sa.allocation.hours) || 0);
                                                     }
                                                 });
+                                                // Sum allocations for this member in this sprint from all existing stories
+                                                if (details.stories && Array.isArray(details.stories)) {
+                                                    details.stories.forEach(story => {
+                                                        if (story.Assignee === assignee.id && Array.isArray(story.sprints)) {
+                                                            story.sprints.forEach(storySprint => {
+                                                                if (storySprint.name === selectedSprint.name) {
+                                                                    allocatedHours += (parseInt(storySprint.allocation.days) || 0) * (parseFloat(hoursPerDay) || 8);
+                                                                    allocatedHours += (parseInt(storySprint.allocation.hours) || 0);
+                                                                }
+                                                            });
+                                                        }
+                                                    });
+                                                }
                                                 const totalAvailHours = avail.days * (parseFloat(hoursPerDay) || 8) + avail.hours;
                                                 let remainingHours = totalAvailHours - allocatedHours;
                                                 remainingHours = Math.max(0, remainingHours);
                                                 const remainingDays = Math.floor(remainingHours / (parseFloat(hoursPerDay) || 8));
                                                 const remainingHrs = remainingHours % (parseFloat(hoursPerDay) || 8);
                                                 return (
-                                                    <Typography sx={{ mt: 1, fontWeight: 500, color: 'green' }}>
-                                                        Remaining for {assignee.name} in this sprint: {remainingDays} days {remainingHrs} hours
-                                                    </Typography>
+                                                    <>
+                                                        <Typography sx={{ mt: 1, fontWeight: 500, color: 'green' }}>
+                                                            Remaining for {assignee.name} in this sprint: {remainingDays} days {remainingHrs} hours
+                                                        </Typography>
+                                                        <Box sx={{ display: "flex", flexDirection: "column", justifyContent: 'left', margin: '10px 10px 10px 0px',  width: '50%' }}>
+                                                            <Box display="flex" justifyContent="left">
+                                                                <TextField
+                                                                    id="sprint-allocation-days"
+                                                                    placeholder='Days'
+                                                                    value={remainingDays === 0 ? '0' : sprintAllocationDays}
+                                                                    type='number'
+                                                                    required
+                                                                    disabled={remainingDays === 0}
+                                                                    inputProps={{ min: 0, max: remainingDays }}
+                                                                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                                                        let val = event.target.value;
+                                                                        if (remainingDays === 0) val = '0';
+                                                                        if (parseInt(val) > remainingDays) val = remainingDays.toString();
+                                                                        setSprintAllocationDays(val);
+                                                                    }}
+                                                                />
+                                                                <TextField
+                                                                    id="sprint-allocation-hours"
+                                                                    placeholder='Hours'
+                                                                    value={remainingHrs === 0 ? '0' : sprintAllocationHours}
+                                                                    type='number'
+                                                                    required
+                                                                    disabled={remainingHrs === 0}
+                                                                    inputProps={{ min: 0, max: remainingHrs }}
+                                                                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                                                        let val = event.target.value;
+                                                                        if (remainingHrs === 0) val = '0';
+                                                                        if (parseInt(val) > remainingHrs) val = remainingHrs.toString();
+                                                                        setSprintAllocationHours(val);
+                                                                    }}
+                                                                />
+                                                            </Box>
+                                                            <Button variant='contained' sx={{ width: '250px', marginTop: '10px' }} onClick={addSprintAllocation} disabled={remainingDays === 0 && remainingHrs === 0}>Add Sprint Effort</Button>
+                                                        </Box>
+                                                    </>
                                                 );
                                             }
                                             return null;
                                         })()}
-                                        <Box sx={{ display: "flex", flexDirection: "column", justifyContent: 'left', margin: '10px 10px 10px 0px',  width: '50%' }}>
-                                            <Box display="flex" justifyContent="left">
-                                                <TextField
-                                                    id="sprint-allocation-days"
-                                                    placeholder='Days'
-                                                    value={sprintAllocationDays}
-                                                    type='number'
-                                                    required
-                                                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                                                        setSprintAllocationDays(event.target.value);
-                                                    }}
-                                                />
-                                                <TextField
-                                                    id="sprint-allocation-hours"
-                                                    placeholder='Hours'
-                                                    value={sprintAllocationHours}
-                                                    type='number'
-                                                    required
-                                                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                                                        setSprintAllocationHours(event.target.value);
-                                                    }}
-                                                />
-                                            </Box>
-                                            <Button variant='contained' sx={{ width: '250px', marginTop: '10px' }} onClick={addSprintAllocation}>Add Sprint Effort</Button>
-                                        </Box>
+                                        {/* Inputs are now rendered above, with disable logic */}
                                     </FormControl>
                                     {showAllocatedSprints && sprintAllocations.map((sprint) => (
                                         (parseInt(sprint.allocation.days) > 0 || parseInt(sprint.allocation.hours) > 0) ? (
