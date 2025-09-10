@@ -1,3 +1,28 @@
+// Returns a list of overloaded members for a given sprint
+export function getOverloadedMembers(selectedSprint: Sprint, membersInSprint: TeamMember[], holidays: string[], hoursPerDay: string | number, storiesInSprint: any[]): { name: string, allocated: number, available: number }[] {
+    if (!selectedSprint || !membersInSprint.length) return [];
+    const overloaded: { name: string, allocated: number, available: number }[] = [];
+    membersInSprint.forEach(member => {
+        // Available effort in hours
+        const avail = getMemberAvailableEffortInSprint(selectedSprint, member, holidays, hoursPerDay);
+        const availableHours = avail.days * (parseFloat(hoursPerDay as string) || 8) + avail.hours;
+        // Allocated effort in hours (sum all stories for this member in this sprint)
+        let allocatedHours = 0;
+        storiesInSprint.forEach(story => {
+            if (story.Assignee === member.id) {
+                const sprintAlloc = story.sprints.find((s: any) => s.name === selectedSprint.name);
+                if (sprintAlloc) {
+                    allocatedHours += (parseInt(sprintAlloc.allocation.days) || 0) * (parseFloat(hoursPerDay as string) || 8);
+                    allocatedHours += (parseInt(sprintAlloc.allocation.hours) || 0);
+                }
+            }
+        });
+        if (allocatedHours > availableHours) {
+            overloaded.push({ name: member.name, allocated: allocatedHours, available: availableHours });
+        }
+    });
+    return overloaded;
+}
 // Returns available days and hours for a member in a sprint, considering holidays, weekends, and planned leaves
 export function getMemberAvailableEffortInSprint(sprint: { start: string, end: string }, member: TeamMember, holidays: string[], hoursPerDay: string | number): { days: number, hours: number } {
     const start = dayjs(sprint.start);

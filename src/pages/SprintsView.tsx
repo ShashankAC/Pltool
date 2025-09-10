@@ -1,11 +1,11 @@
-import { Box, Card, CardContent, colors, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Typography } from "@mui/material";
+import { Box, Card, CardContent, colors, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Typography, Alert, AlertTitle } from "@mui/material";
 import { PieChart } from '@mui/x-charts/PieChart';
 import { useSelector } from "react-redux";
 import { PiDetails, Sprint } from "../store/utils/types";
 import { useEffect, useState } from "react";
 import Chip from '@mui/material/Chip';
 import dayjs from "dayjs";
-import { getMemberCountInSprint, getMembersInSprint, getNumberOfHolidays, getNumberOfWorkingDays, getPossibleStoryPoints, getPrioritiesCount, getPrioritiesInSprint, getStoriesInSprint, getStoryPointsOfMembersInSprint, getTotalStoryPoints } from "../store/utils/helpers";
+import { getMemberCountInSprint, getMembersInSprint, getNumberOfHolidays, getNumberOfWorkingDays, getPossibleStoryPoints, getPrioritiesCount, getPrioritiesInSprint, getStoriesInSprint, getStoryPointsOfMembersInSprint, getTotalStoryPoints, getOverloadedMembers } from "../store/utils/helpers";
 import { BarChart } from '@mui/x-charts';
 import { Gauge } from '@mui/x-charts/Gauge';
 import { STORYTYPES } from "../store/utils/constants";
@@ -24,6 +24,8 @@ function SprintsView() {
     const [membersInSprint, setMembersInSprint] = useState(getMembersInSprint(storiesInSprint, members));
     const [actualStoryPointsAvailable, setActualStoryPointsAvailable] = useState(0);
     const [totalStoryPointsAvailable, setTotalStoryPointsAvailable] = useState(0);
+
+    const overloadedMembers = getOverloadedMembers(selectedSprint, membersInSprint, holidays, hoursPerDay, storiesInSprint);
 
     useEffect(() => {
         setActualStoryPointsAvailable(getTotalStoryPoints(storiesInSprint, parseFloat(hoursPerDay)));
@@ -116,6 +118,20 @@ function SprintsView() {
     }
     return (
     <Box sx={{ margin: '10px', width: '90%' }}>
+        {/* Overload warning */}
+        {overloadedMembers.length > 0 && (
+            <Alert severity="warning" sx={{ mb: 2 }}>
+                <AlertTitle>Warning</AlertTitle>
+                The following member(s) are overloaded in this sprint:
+                <ul style={{ margin: 0, paddingLeft: 24 }}>
+                    {overloadedMembers.map(m => (
+                        <li key={m.name}>
+                            {m.name}: Allocated {m.allocated}h, Available {m.available}h
+                        </li>
+                    ))}
+                </ul>
+            </Alert>
+        )}
         <Typography variant="h4" gutterBottom>Sprints</Typography>
         <Box sx={{ marginTop: '10px', width: '30%', margin: '5px' }}>
             <FormControl fullWidth>

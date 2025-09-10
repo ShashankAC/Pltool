@@ -46,11 +46,19 @@ const JsonEditor = ({ value, onChange }: { value: string; onChange: (v: string) 
         const scrollDOM = editor.scrollDOM;
         const scrollTop = scrollDOM ? scrollDOM.scrollTop : 0;
         const scrollLeft = scrollDOM ? scrollDOM.scrollLeft : 0;
-        const selection = editor.state.selection;
 
+        // Clamp selection to new document length
+        let selection = editor.state.selection;
+        const newDocLength = value.length;
+        let anchor = Math.min(selection.main.anchor, newDocLength);
+        let head = Math.min(selection.main.head, newDocLength);
+        // If selection is out of bounds, reset to start
+        if (anchor < 0 || head < 0 || anchor > newDocLength || head > newDocLength) {
+          anchor = head = 0;
+        }
         const transaction = editor.state.update({
           changes: { from: 0, to: editor.state.doc.length, insert: value },
-          selection,
+          selection: { anchor, head },
         });
         editor.dispatch(transaction);
 
