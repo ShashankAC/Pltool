@@ -38,17 +38,32 @@ const JsonEditor = ({ value, onChange }: { value: string; onChange: (v: string) 
   }, []);
 
   useEffect(() => {
-  if (viewRef.current && value) {
-    const transaction = viewRef.current.state.update({
-      changes: {
-        from: 0,
-        to: viewRef.current.state.doc.length,
-        insert: value,
-      },
-    });
-    viewRef.current.dispatch(transaction);
-  }
-}, [value]);
+    if (viewRef.current && value != null) {
+      const editor = viewRef.current;
+      const currentValue = editor.state.doc.toString();
+      if (currentValue !== value) {
+        // Save scroll and selection
+        const scrollDOM = editor.scrollDOM;
+        const scrollTop = scrollDOM ? scrollDOM.scrollTop : 0;
+        const scrollLeft = scrollDOM ? scrollDOM.scrollLeft : 0;
+        const selection = editor.state.selection;
+
+        const transaction = editor.state.update({
+          changes: { from: 0, to: editor.state.doc.length, insert: value },
+          selection,
+        });
+        editor.dispatch(transaction);
+
+        // Restore scroll and selection after DOM update
+        if (scrollDOM) {
+          requestAnimationFrame(() => {
+            scrollDOM.scrollTop = scrollTop;
+            scrollDOM.scrollLeft = scrollLeft;
+          });
+        }
+      }
+    }
+  }, [value]);
 
   return <div style={{
     margin: '10px',
