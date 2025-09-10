@@ -680,6 +680,12 @@ function PiDetails() {
                                                 remainingHours = Math.max(0, remainingHours);
                                                 const remainingDays = Math.floor(remainingHours / (parseFloat(hoursPerDay) || 8));
                                                 const remainingHrs = remainingHours % (parseFloat(hoursPerDay) || 8);
+                                                // Validation for over-allocation
+                                                const enteredDays = parseInt(sprintAllocationDays) || 0;
+                                                const enteredHours = parseInt(sprintAllocationHours) || 0;
+                                                const daysExceeded = enteredDays > remainingDays;
+                                                const hoursExceeded = enteredHours > remainingHrs;
+                                                const showWarning = daysExceeded || hoursExceeded;
                                                 return (
                                                     <>
                                                         <Typography sx={{ mt: 1, fontWeight: 500, color: 'green' }}>
@@ -698,7 +704,6 @@ function PiDetails() {
                                                                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                                                                         let val = event.target.value;
                                                                         if (remainingDays === 0) val = '0';
-                                                                        if (parseInt(val) > remainingDays) val = remainingDays.toString();
                                                                         setSprintAllocationDays(val);
                                                                     }}
                                                                 />
@@ -713,12 +718,17 @@ function PiDetails() {
                                                                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                                                                         let val = event.target.value;
                                                                         if (remainingHrs === 0) val = '0';
-                                                                        if (parseInt(val) > remainingHrs) val = remainingHrs.toString();
                                                                         setSprintAllocationHours(val);
                                                                     }}
                                                                 />
                                                             </Box>
-                                                            <Button variant='contained' sx={{ width: '250px', marginTop: '10px' }} onClick={addSprintAllocation} disabled={remainingDays === 0 && remainingHrs === 0}>Add Sprint Effort</Button>
+                                                            {showWarning && (
+                                                                <Typography sx={{ color: 'red', mt: 1 }}>
+                                                                    {daysExceeded && `You cannot allocate more than ${remainingDays} day(s). `}
+                                                                    {hoursExceeded && `You cannot allocate more than ${remainingHrs} hour(s).`}
+                                                                </Typography>
+                                                            )}
+                                                            <Button variant='contained' sx={{ width: '250px', marginTop: '10px' }} onClick={addSprintAllocation} disabled={remainingDays === 0 && remainingHrs === 0 || showWarning}>Add Sprint Effort</Button>
                                                         </Box>
                                                     </>
                                                 );
